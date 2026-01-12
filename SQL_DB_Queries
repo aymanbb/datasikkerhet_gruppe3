@@ -2,8 +2,6 @@
 CREATE TABLE users (
 	Username int,
     Password varchar(255),
-    Subject varchar(255),
-    PIN int(4)
 );
 
 
