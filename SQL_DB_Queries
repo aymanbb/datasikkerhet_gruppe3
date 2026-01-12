@@ -1,0 +1,18 @@
+// Basic user table 
+CREATE TABLE users (
+	Username int,
+    	Password varchar(255),
+    	Subject varchar(255),
+    	PIN INT(4)
+);
+
+
+// Teacher table
+CREATE TABLE teachers (
+	Username int,
+    	Password varchar(255),
+    	Subject varchar(255),
+    	PIN INT(4),
+	PictureFilename varchar(255)
+);
+
