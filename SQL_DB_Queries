@@ -1,13 +1,15 @@
 // Basic user table 
 CREATE TABLE users (
-	Username int,
+	Name varchar(255),
+	Email varchar(255), 
     Password varchar(255),
 );
 
 
 // Teacher table
 CREATE TABLE teachers (
-	Username int,
+		Name varchar(255),
+		Email varchar(255),
     	Password varchar(255),
     	Subject varchar(255),
     	PIN int(4),
