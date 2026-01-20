@@ -1,18 +1,29 @@
-// Basic user table 
+// User table 
 CREATE TABLE users (
-	Username int,
-    Password varchar(255),
+	User_ID int NOT NULL AUTO_INCREMENT,
+	Name_User varchar (255)
+	Email varchar(255),
+    Password varchar(255)
     Subject varchar(255),
-    PIN int(4)
+	Subject_PIN int(4),
+	Picture_filename varchar(255),
+	PRIMARY KEY (User_ID);
 );
 
 
-// Teacher table
-CREATE TABLE teachers (
-	Username int,
-    	Password varchar(255),
-    	Subject varchar(255),
-    	PIN int(4),
-	PictureFilename varchar(255)
+// Message table
+CREATE TABLE messages (
+	Message_ID int NOT NULL AUTO_INCREMENT,
+	User_ID int NOT NULL,
+	Message_body varchar (500),
+	Answer varchar(500),
+	Comment_1 varchar(500),
+	Comment_2 varchar(500),
+	Comment_3 varchar(500),
+	Comment_4 varchar(500),
+	Comment_5 varchar(500),
+	PRIMARY KEY (Message_ID)
 );
+
+
 
