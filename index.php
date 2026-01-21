@@ -92,12 +92,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Authentication Page</title>
+    <title>Gruppe 3</title>
+    <style>
+        body {
+                margin: 3rem;
+                article {
+                        padding: 0rem 3rem 0rem 3rem;
+
+                        form{
+                                display: flex;
+                                flex-direction: column;
+                                max-width: 33dvw;
+
+                                label{
+                                        padding-top: 1rem;
+                                }
+                        }
+                }
+                section {
+                        display: flex;
+                        flex-direction: column;
+                        padding: 2rem 0rem 2rem 0rem;
+                }
+        }
+    </style>
 </head>
 <body>
     <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
-
-    <section>
+    <article>
         <h2>Login</h2>
         <form action="" method="post">
             <label for="login-username">Username:</label>
@@ -108,10 +130,10 @@
 
             <button type="submit" name="login_submit">Login</button>
         </form>
-    </section>
+    </article>
 
-    <section>
-         <h2>Register</h2>
+    <article>
+        <h2>Register</h2>
         <a href="#">Registrering for forelesere</a>
         <form action="" method="post">
             <label for="register-username">Username:</label>
@@ -125,11 +147,11 @@
 
             <button type="submit" name="register_submit">Register</button>
         </form>
-    </section>
+    </article>
 
-    <div>
+    <section>
         <a href="guest.php">Continue as Guest</a>
-        <a href="passrestore.php">Forgotten your password?</a>
-    </div>
+        <a href="#">Forgotten password?</a>
+    </section>
 </body>
 </html>
