@@ -4,6 +4,7 @@
     $dbuser = "test_user";
     $dbpass = "strong_password";
     $sub_database = "test";
+    $table_name = "register";
     try {
         $pdo = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
@@ -30,14 +31,14 @@
                 $pin = $_POST["register_pin"];
                 $image = $_POST["register_image"];
 
-                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($subject_code) || empty($pin) || empty($image)) {
+                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($subject_code) || empty($pin)) {
                     $message = "All fields are required.";
                 } else {
 
                     try {
                         $stmt = $pdo->prepare(
-                            "INSERT INTO register (username, email, password, subject, subject_code, pin)
-                            VALUES (:username, :email, :password, :subject, :subject_code, :pin)"
+                            "INSERT INTO $table_name (username, email, password, subject, subject_pin, subject_code)
+                            VALUES (:username, :email, :password, :subject, :subject_pin, :subject_code)"
                         );
 
                         $stmt->execute([
@@ -45,12 +46,13 @@
                             ":email" => $email,
                             ":password" => $password,
                             ":subject" => $subject,
+                            ":subject_pin" => $pin,
                             ":subject_code" => $subject_code,
-                            ":pin" => $pin,
                         ]);
 
                         $message = "Registration successful!";
                     } catch (PDOException $e) {
+                        echo $e->getMessage();
                         if ($e->getCode() == 23000) {
                             $message = "Username or email already exists.";
                         } else {
@@ -92,6 +94,7 @@
     </style>
 </head>
 <body>
+    <a href="index.php">back to start =D</a>
     <h1>Foreleser Registration Page</h1>
     <article>
         <h2>Register as a Foreleser</h2>
@@ -119,6 +122,11 @@
             <input type="file" id="foreleser-image" name="register_image" accept="image/*" required>
 
             <button type="submit" name="foreleser_register_submit">Register</button>
+
+            <?php if ($message): ?>
+                <p class="message"><?= htmlspecialchars($message) ?></p>
+            <?php endif; ?>
+
         </form>
     </article>
 

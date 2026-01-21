@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>$Emne-meldinger c:</title>
+        <style>
+            body article form input {
+                width: 100dvw;
+                height: 100dvh;
+
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            Meldinger for emnet: $variabelnavn her
+        </h1>
+
+        <article>
+            <h3>
+                Melding fra: $Admin
+            </h3>
+            <p>
+                Velkommen til forumet $emnenavn
+            </p>
+        </article>
+        <article>
+            <form>
+                <label for="content">Skriv din melding her</label>
+                <input type="textarea" name="content" maxlength="256" required>
+            </form>
+        </article>
+    </body>
+
+</html>
