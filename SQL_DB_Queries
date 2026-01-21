@@ -1,9 +1,9 @@
 // User table 
 CREATE TABLE users (
 	User_ID int NOT NULL AUTO_INCREMENT,
-	Name_User varchar (255)
+	Name_User varchar(255),
 	Email varchar(255),
-    Password varchar(255)
+    Password varchar(255),
     Subject varchar(255),
 	Subject_PIN int(4),
 	Picture_filename varchar(255),
