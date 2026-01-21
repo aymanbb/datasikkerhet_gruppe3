@@ -10,20 +10,50 @@ CREATE TABLE users (
 	PRIMARY KEY (User_ID)
 );
 
-
 // Message table
 CREATE TABLE messages (
 	Message_ID int NOT NULL AUTO_INCREMENT,
 	User_ID int NOT NULL,
 	Message_body varchar (500),
 	Answer varchar(500),
+	Subject varchar(255),
 	Comment_1 varchar(500),
 	Comment_2 varchar(500),
 	Comment_3 varchar(500),
 	Comment_4 varchar(500),
 	Comment_5 varchar(500),
 	PRIMARY KEY (Message_ID)
+	// !! Add subjectID/subject
 );
 
+DELIMITER //
+CREATE PROCEDURE addStudent (IN student_name VARCHAR(255), IN student_email VARCHAR(255), IN student_password VARCHAR(255))
+BEGIN
+	INSERT INTO users (name, email, password) VALUES (student_name, student_email, student_password);
+END //
+DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE addTeacher (IN teacher_name VARCHAR(255), IN teacher_email VARCHAR(255), IN teacher_password VARCHAR(255), IN teacher_subject VARCHAR(255), IN teacher_subjectPIN INT(4), IN teacher_picFilename VARCHAR(255))
+BEGIN
+	INSERT INTO users (Name, Email, Password, Subject, Subject_PIN, Picture_filename) VALUES (student_name, student_email, student_password, teacher_subject, teacher_subjectPIN, teacher_picFilename);
+END //
+DELIMITER ;
 
+CREATE VIEW message_view AS SELECT Message_body, Answer, Comment_1, Comment_2, Comment_3, Comment_4, Comment_5 FROM messages;
+
+DELIMITER //
+CREATE PROCEDURE addMessage (IN message_User_ID INT, IN message_body VARCHAR(500), IN message_subject VARCHAR(255))
+BEGIN
+	INSERT INTO users (User_ID, Message_body, Subject) VALUES (message_User_ID, message_body, message_subject);
+END //
+DELIMITER ;
+
+// remember to match to the correct message with the ID etc.
+DELIMITER //
+CREATE PROCEDURE addAnswerToMessage (IN messageID INT, IN answerText VARCHAR(500))
+BEGIN
+	UPDATE messages SET Answer = answerText
+	WHERE Message_ID = messageID AND answerText IS NULL;
+END //
+DELIMITER ;
