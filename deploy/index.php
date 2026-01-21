@@ -30,11 +30,6 @@
                 $message = "All fields are required.";
             } else {
 
-                try {
-                    $message = "Registration successful!";
-                } catch ($e) {
-
-                }
             }
         }elseif(isset($_POST['register_submit'])){
 
