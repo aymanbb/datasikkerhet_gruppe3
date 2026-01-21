@@ -134,7 +134,7 @@
 
     <article>
         <h2>Register</h2>
-        <a href="#">Registrering for forelesere</a>
+        <a href="foreleser_register.php">Registrering for forelesere</a>
         <form action="" method="post">
             <label for="register-username">Username:</label>
             <input type="text" id="register-username" name="register_username" required>
