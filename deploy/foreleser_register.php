@@ -1,4 +1,62 @@
 <?php
+    $host = '127.0.0.1';
+    $dbname = "test_database";
+    $dbuser = "test_user";
+    $dbpass = "strong_password";
+    $sub_database = "test";
+    try {
+        $pdo = new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $dbuser,
+            $dbpass,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        );
+    } catch (PDOException $e) {
+        die("Database connection failed: " . $e->getMessage());
+    }
+
+    $message = "";
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+            if(isset($_POST['foreleser_register_submit'])){
+
+                $username = trim($_POST["register_username"]);
+                $email = trim(string: $_POST["register_email"]);
+                $password = $_POST["register_password"];
+                $subject = trim($_POST["register_subject"]);
+                $pin = $_POST["register_pin"];
+                $username = $_POST["register_image"];
+
+                if (empty($username) || empty($email) || empty($password)) {
+                    $message = "All fields are required.";
+                } else {
+
+                    try {
+                        $stmt = $pdo->prepare(
+                            "INSERT INTO register (username, email, password)
+                            VALUES (:username, :email, :password)"
+                        );
+
+                        $stmt->execute([
+                            ":username" => $username,
+                            ":email" => $email,
+                            ":password" => $password
+                        ]);
+
+                        $message = "Registration successful!";
+                    } catch (PDOException $e) {
+                        if ($e->getCode() == 23000) {
+                            $message = "Username or email already exists.";
+                        } else {
+                            $message = "An error occurred.";
+                        }
+                    }
+                }
+            }
+        }
+
 ?>
 
 <!DOCTYPE html>
@@ -45,13 +103,13 @@
             <input type="password" id="register-password" name="register_password" required>
 
             <label for="subject-name">Name of Subject:</label>
-            <input type="text" id="subject-name" name="subject_name" required>
+            <input type="text" id="subject-name" name="register_subject" required>
 
             <label for="subject-pin">PIN for Subject:</label>
-            <input type="text" id="subject-pin" name="subject_pin" pattern="[0-9]*" maxlength="4" required>
+            <input type="text" id="subject-pin" name="register_pin" pattern="[0-9]*" maxlength="4" required>
 
             <label for="foreleser-image">Upload Image of Yourself:</label>
-            <input type="file" id="foreleser-image" name="foreleser_image" accept="image/*" required>
+            <input type="file" id="foreleser-image" name="register_image" accept="image/*" required>
 
             <button type="submit" name="foreleser_register_submit">Register</button>
         </form>

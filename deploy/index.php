@@ -31,23 +31,9 @@
             } else {
 
                 try {
-                    $stmt = $pdo->prepare(
-                        "INSERT INTO test (username, password)
-                        VALUES (:username, :password)"
-                    );
-
-                    $stmt->execute([
-                        ":username" => $username,
-                        ":password" => $password
-                    ]);
-
                     $message = "Registration successful!";
-                } catch (PDOException $e) {
-                    if ($e->getCode() == 23000) {
-                        $message = "Username or email already exists.";
-                    } else {
-                        $message = "An error occurred.";
-                    }
+                } catch ($e) {
+
                 }
             }
         }elseif(isset($_POST['register_submit'])){
