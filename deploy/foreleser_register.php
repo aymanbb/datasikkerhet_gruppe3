@@ -27,9 +27,9 @@
                 $password = $_POST["register_password"];
                 $subject = trim($_POST["register_subject"]);
                 $pin = $_POST["register_pin"];
-                $username = $_POST["register_image"];
+                $image = $_POST["register_image"];
 
-                if (empty($username) || empty($email) || empty($password)) {
+                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($pin) || empty($image)) {
                     $message = "All fields are required.";
                 } else {
 
