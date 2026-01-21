@@ -7,7 +7,7 @@ CREATE TABLE users (
     Subject varchar(255),
 	Subject_PIN int(4),
 	Picture_filename varchar(255),
-	PRIMARY KEY (User_ID);
+	PRIMARY KEY (User_ID)
 );
 
 
