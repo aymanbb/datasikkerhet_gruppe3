@@ -4,11 +4,31 @@ CREATE TABLE users (
 	Name_User varchar(255),
 	Email varchar(255),
     Password varchar(255),
-    Subject varchar(255),
-	Subject_PIN int(4),
+	Is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
 	Picture_filename varchar(255),
+	Subject_ID int, 
+	Session_cookie varchar(255),
 	PRIMARY KEY (User_ID)
 );
+
+
+// Subject table
+CREATE TABLE subject (
+	Subject_ID int NOT NULL AUTO_INCREMENT,
+	Subject_name varchar(255),
+	Subject_PIN int(4)
+);
+
+
+// Comment table
+CREATE TABLE comments (
+ 	Comment_ID int NOT NULL AUTO_INCREMENT,
+	Message_ID int NOT NULL,
+	Comment_body varchar(255), 
+	PRIMARY KEY (Comment_ID),
+	FOREIGN KEY (Message_id) REFERENCES messages(Message_ID)
+);
+
 
 // Message table
 CREATE TABLE messages (
@@ -16,15 +36,11 @@ CREATE TABLE messages (
 	User_ID int NOT NULL,
 	Message_body varchar (500),
 	Answer varchar(500),
-	Subject varchar(255),
-	Comment_1 varchar(500),
-	Comment_2 varchar(500),
-	Comment_3 varchar(500),
-	Comment_4 varchar(500),
-	Comment_5 varchar(500),
-	PRIMARY KEY (Message_ID)
-	// !! Add subjectID/subject
+	Subject_ID varchar(255),
+	PRIMARY KEY (Message_ID),
+	FOREIGN KEY (Subject_ID) REFERENCES subject(Subject_ID)
 );
+
 
 DELIMITER //
 CREATE PROCEDURE addStudent (IN student_name VARCHAR(255), IN student_email VARCHAR(255), IN student_password VARCHAR(255))
@@ -36,16 +52,18 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE addTeacher (IN teacher_name VARCHAR(255), IN teacher_email VARCHAR(255), IN teacher_password VARCHAR(255), IN teacher_subject VARCHAR(255), IN teacher_subjectPIN INT(4), IN teacher_picFilename VARCHAR(255))
 BEGIN
-	INSERT INTO users (Name, Email, Password, Subject, Subject_PIN, Picture_filename) VALUES (student_name, student_email, student_password, teacher_subject, teacher_subjectPIN, teacher_picFilename);
+	DECLARE teacherTrue BOOLEAN;
+	SET teacherTrue = TRUE;
+	INSERT INTO users (Name, Email, Password, Subject, Subject_PIN, Picture_filename, Is_teacher) VALUES (student_name, student_email, student_password, teacher_subject, teacher_subjectPIN, teacher_picFilename, teacherTrue);
 END //
 DELIMITER ;
 
-CREATE VIEW message_view AS SELECT Message_body, Answer, Comment_1, Comment_2, Comment_3, Comment_4, Comment_5 FROM messages;
+// CREATE VIEW message_view AS SELECT Message_body, Answer, Comment_1, Comment_2, Comment_3, Comment_4, Comment_5 FROM messages;
 
 DELIMITER //
-CREATE PROCEDURE addMessage (IN message_User_ID INT, IN message_body VARCHAR(500), IN message_subject VARCHAR(255))
+CREATE PROCEDURE addMessage (IN message_User_ID INT, IN message_message_body VARCHAR(500), IN message_subject VARCHAR(255))
 BEGIN
-	INSERT INTO users (User_ID, Message_body, Subject) VALUES (message_User_ID, message_body, message_subject);
+	INSERT INTO users (User_ID, Message_body, Subject) VALUES (message_User_ID, message_message_body, message_subject);
 END //
 DELIMITER ;
 
