@@ -37,6 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         ":new_message" => $new_message
                     ]);
 
+                
+            $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $message = "Registration successful!";
 
         } catch(PDOException $e){
@@ -44,19 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
     }
-}
-  
-// Fetch all messages ordered by emneid
-try {
-    $stmt = $pdo->prepare(
-        "SELECT emne_id, message
-         FROM mock_database
-         ORDER BY emne_id ASC"
-    );
-    $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-} catch (PDOException $e) {
-    $subject_messages = [];
 }
 
 ?>
