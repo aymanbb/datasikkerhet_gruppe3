@@ -19,9 +19,7 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-
 $melding = "";
-
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
         $melding = htmlspecialchars($_GET["test-melding"]);
@@ -34,14 +32,12 @@ try {
         "SELECT emne_id, message
          FROM mock_database
          ORDER BY emne_id ASC"
-
     );
     $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     $subject_messages = [];
 }
-
 
 ?>
 
@@ -106,13 +102,12 @@ try {
                 <textarea name="content" maxlength="256" rows="10" cols="50" required></textarea>
             </form>
         </article>
-        <?php foreach ($users as $user): ?>
-            <tr>
-                <td><?= htmlspecialchars($user['id']) ?></td>
-                <td><?= htmlspecialchars($user['username']) ?></td>
-                <td><?= htmlspecialchars($user['email']) ?></td>
-                <td><?= htmlspecialchars($user['created_at']) ?></td>
-            </tr>
+        <p>Meldinger:</p>
+        <?php foreach ($subject_messages as $subject_message): ?>
+            <p>
+                <td><?= htmlspecialchars($subject_message['emne_id']) ?></td>
+                <td><?= htmlspecialchars($subject_message['message']) ?></td>
+            </p>
         <?php endforeach; ?>
 
     </body>
