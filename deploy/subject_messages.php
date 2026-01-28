@@ -20,16 +20,16 @@ try {
 }
 
 $message = "";
+$subject_code = "itf1000";
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
         $new_message = htmlspecialchars($_GET["test-melding"]);
-        $subject_code = "itf1000";
 
         try{
             $stmt = $pdo->prepare(
                 "INSERT INTO mock_database(emne_id, message) 
-                VALUES (:subject_code, :new_message);"
+                VALUES (:subject_code, :new_message)"
             );
 
             $stmt->execute([
@@ -37,8 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         ":new_message" => $new_message
                     ]);
 
-                
-            $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            //$subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $message = "Registration successful!";
 
         } catch(PDOException $e){
@@ -46,6 +45,22 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
     }
+
+    try {
+        $stmt = $pdo->prepare(
+            "select emne_id, message 
+            from mock_database 
+            where emne_id = :subject_code"
+        );
+
+        $stmt->execute(
+            [":subject_code" => $subject_code]
+        );
+        $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        catch(PDOException $e) {
+            die("Serious error message for serious problems" . $e->getMessage());
+        }
 }
 
 ?>
