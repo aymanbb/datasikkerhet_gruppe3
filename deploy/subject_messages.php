@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 }
   
-// Fetch all users
+// Fetch all messages ordered by emneid
 try {
     $stmt = $pdo->query(
         "SELECT emne_id, message
@@ -48,27 +48,52 @@ try {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>$Emne-meldinger c:</title>
         <style>
-            body article form {
-                display: flex;
-                flex-direction: column;
-                textarea {
-                    /*width: 600px;
-                    height: 300px;*/
-                    resize: none;
-                    border: 1px solid black;
-                    border-radius: 5%;
-                    max-width: 40dvw;
+            body {
 
+                button {
+                    max-width: max-content;
+                }
+                section {
+                    display: flex;
+                    flex-direction: column;
+
+                    article {
+                        border: 3px solid black;
+                        padding: 2rem;
+                        margin: 1rem 0 1rem 0;
+                        max-width: 50%;
+
+                        .message{
+                            border: 1px solid black;
+                        }
+                }
+                }
+            
+                article form {
+                    display: flex;
+                    flex-direction: column;
+                    textarea {
+                        resize: none;
+                        border: 1px solid black;
+                        border-radius: 5%;
+                        max-width: 40dvw;
+                    }
                 }
             }
         </style>
     </head>
     <body>
         <a href="index.php">back to start =D</a>
-        <h1>
-            Meldinger for emnet: $variabelnavn her
-        </h1>
-
+        <section>
+        <h1>Meldinger for emnet: $variabelnavn her</h1>
+        <?php foreach ($subject_messages as $subject_message): ?>
+            <article>
+                <h3>Fra anonym:</h3>
+                <p><?= htmlspecialchars($subject_message['emne_id']) ?></p>
+                <p class="message"><?= htmlspecialchars($subject_message['message']) ?></p>
+            </article>
+        <?php endforeach; ?>
+        </section>
         <article>
             <h3>
                 Melding fra: $Admin
@@ -102,14 +127,5 @@ try {
                 <textarea name="content" maxlength="256" rows="10" cols="50" required></textarea>
             </form>
         </article>
-        <p>Meldinger:</p>
-        <?php foreach ($subject_messages as $subject_message): ?>
-            <p>
-                <td><?= htmlspecialchars($subject_message['emne_id']) ?></td>
-                <td><?= htmlspecialchars($subject_message['message']) ?></td>
-            </p>
-        <?php endforeach; ?>
-
     </body>
-
 </html>
