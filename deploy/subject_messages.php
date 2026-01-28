@@ -19,16 +19,36 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-$melding = "";
+$message = "";
+
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
-        $melding = htmlspecialchars($_GET["test-melding"]);
+        $new_message = htmlspecialchars($_GET["test-melding"]);
+        $subject_code = "itf1000";
+
+        try{
+            $stmt = $pdo->prepare(
+                "INSERT INTO mock_database(emne_id, message) 
+                VALUES (:subject_code, :new_message);"
+            );
+
+            $stmt->execute([
+                        ":subject_code" => $subject_code,
+                        ":new_message" => $new_message
+                    ]);
+
+            $message = "Registration successful!";
+
+        } catch(PDOException $e){
+            die("Oopsie woopsie! UWU we made a fucky wucky!!\n" . $e->getMessage());
+        }
+
     }
 }
   
 // Fetch all users
 try {
-    $stmt = $pdo->query(
+    $stmt = $pdo->prepare(
         "SELECT emne_id, message
          FROM mock_database
          ORDER BY emne_id ASC"
@@ -93,7 +113,7 @@ try {
             <form method="get">
                 <label for="test-melding">skriv noe her</label>
                 <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>            
-                <button type="submit" name="test-melding-submit">Register</button>
+                <button type="submit" name="test-melding-submit">Register test melding</button>
             </form>
         </article>
         <article>
