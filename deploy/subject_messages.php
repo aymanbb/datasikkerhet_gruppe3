@@ -65,6 +65,7 @@ try {
 
                         .message{
                             border: 1px solid black;
+                            padding: 4px;
                         }
                 }
                 }
