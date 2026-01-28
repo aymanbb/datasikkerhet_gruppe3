@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         ":new_message" => $new_message
                     ]);
 
-            //$subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $message = "Registration successful!";
 
         } catch(PDOException $e){
@@ -74,34 +73,74 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <style>
             body {
 
+                #skip {
+                    bottom: 0;
+                    position: fixed;
+                    right: 3rem;
+                    margin: 1rem;
+                    border-radius: 98%;
+                    padding: 1rem;
+                    height: 3rem;
+                    width: fit-content;
+                    align-items: center;
+                    display: flex;
+                    background-color: #cecece;
+                    font-size: 16px;
+                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+                    text-decoration: none;
+                }
+
                 button {
                     max-width: max-content;
                 }
+
                 section {
                     display: flex;
                     flex-direction: column;
 
+                    h1 {
+                        margin: auto;
+                    }
+
                     article {
                         border: 3px solid black;
                         padding: 2rem;
-                        margin: 1rem 0 1rem 0;
-                        max-width: 50%;
+                        width: 50dvw;
+                        margin: 1rem auto 1rem auto;
+                        
 
                         .message{
                             border: 1px solid black;
                             padding: 4px;
                         }
-                }
+                    }
                 }
             
-                article form {
+                article {
                     display: flex;
                     flex-direction: column;
-                    textarea {
-                        resize: none;
-                        border: 1px solid black;
-                        border-radius: 5%;
-                        max-width: 40dvw;
+
+                    h2{
+                        width: 50dvw;
+                        margin: 3rem auto auto auto;
+                    }
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 2rem 2rem 2rem;
+                        width: 50dvw;
+                        margin: 1rem auto 1rem auto;
+
+                        textarea {
+                            resize: none;
+                            border: 3px solid black;
+                            max-width: 40dvw;
+                        }
+
+                        button {
+                            padding: 3px 10px 3px 10px;
+                        }
                     }
                 }
             }
@@ -109,6 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     </head>
     <body>
         <a href="index.php">back to start =D</a>
+        <a href="#send_message" id="skip">Jump to contribute</a>
         <section>
         <h1>Meldinger for emnet: $variabelnavn her</h1>
         <?php foreach ($subject_messages as $subject_message): ?>
@@ -120,36 +160,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <?php endforeach; ?>
         </section>
         <article>
-            <h3>
-                Melding fra: $Admin
-            </h3>
-            <p>
-                Velkommen til forumet $emnenavn
-            </p>
-            <p>
-                <!-- fetched contents'
-                keystring = emneID
-
-                $key = $_GET['keystring'];
-                $results = mysql_query("SELECT * FROM users WHERE keystring='".mysql_real_escape_string($key)."'");    
-                while ($row = mysql_fetch_array($results)) {
-                }
-                  -->
-            </p>
+            <h2>Delta i samtalen!</h2>
             <?php if ($melding != ""): ?>
                 <p class="melding"><?= htmlspecialchars($melding) ?></p>
             <?php endif; ?>
             
             <form method="get">
-                <label for="test-melding">skriv noe her</label>
+                <label for="test-melding" id="send_message">Skriv din melding her</label>
                 <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>            
-                <button type="submit" name="test-melding-submit">Register test melding</button>
-            </form>
-        </article>
-        <article>
-            <form>
-                <label for="content">Skriv din melding her</label>
-                <textarea name="content" maxlength="256" rows="10" cols="50" required></textarea>
+                <button type="submit" name="test-melding-submit">Send</button>
             </form>
         </article>
     </body>
