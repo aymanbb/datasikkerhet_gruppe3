@@ -27,6 +27,21 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $melding = htmlspecialchars($_GET["test-melding"]);
     }
 }
+  
+// Fetch all users
+try {
+    $stmt = $pdo->query(
+        "SELECT emne_id, message
+         FROM mock_database
+         ORDER BY emne_id ASC"
+
+    );
+    $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    $subject_messages = [];
+}
+
 
 ?>
 
@@ -91,6 +106,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 <textarea name="content" maxlength="256" rows="10" cols="50" required></textarea>
             </form>
         </article>
+        <?php foreach ($users as $user): ?>
+            <tr>
+                <td><?= htmlspecialchars($user['id']) ?></td>
+                <td><?= htmlspecialchars($user['username']) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= htmlspecialchars($user['created_at']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+
     </body>
 
 </html>
