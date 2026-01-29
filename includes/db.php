@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/config.php';
-
-$con = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
-
-if(mysqli_connect_errno()) {
-    exit('Failed to connect to MySQL: ' . mysqli_connect_error());
+try {
+    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+} catch (PDOException $e) {
+    die("Database connection failed.");
 }
-?>
