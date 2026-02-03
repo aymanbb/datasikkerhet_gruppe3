@@ -16,7 +16,8 @@ CREATE TABLE users (
 CREATE TABLE subject (
 	Subject_ID int NOT NULL AUTO_INCREMENT,
 	Subject_name varchar(255),
-	Subject_PIN int(4)
+	Subject_PIN int(4),
+	PRIMARY KEY (Subject_ID)
 );
 
 
@@ -36,7 +37,7 @@ CREATE TABLE messages (
 	User_ID int NOT NULL,
 	Message_body varchar (500),
 	Answer varchar(500),
-	Subject_ID varchar(255),
+	Subject_ID int NOT NULL,
 	PRIMARY KEY (Message_ID),
 	FOREIGN KEY (Subject_ID) REFERENCES subject(Subject_ID)
 );
