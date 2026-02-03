@@ -55,11 +55,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt->execute(
             [":subject_code" => $subject_code]
         );
+
         $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        catch(PDOException $e) {
-            die("Serious error message for serious problems" . $e->getMessage());
-        }
+        
+    }catch(PDOException $e) {
+        die("Serious error message for serious problems" . $e->getMessage());
+    }
 }
 
 ?>

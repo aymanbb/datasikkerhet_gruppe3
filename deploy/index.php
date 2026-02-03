@@ -131,7 +131,7 @@
     </article>
 
     <section>
-        <a href="guest.php">Continue as Guest</a>
+        <a href="guest_login.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
     </section>
