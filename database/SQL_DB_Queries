@@ -1,13 +1,13 @@
 // User table 
 CREATE TABLE users (
 	User_ID int NOT NULL AUTO_INCREMENT,
-	Name_User varchar(255),
-	Email varchar(255),
-    Password varchar(255),
+	Name_User varchar(75),
+	Email varchar(254),
+    Password varchar(50),
 	Is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
 	Picture_filename varchar(255),
 	Subject_ID int, 
-	Session_cookie varchar(255),
+	Session_cookie varchar(32),
 	PRIMARY KEY (User_ID)
 );
 
@@ -16,7 +16,8 @@ CREATE TABLE users (
 CREATE TABLE subject (
 	Subject_ID int NOT NULL AUTO_INCREMENT,
 	Subject_name varchar(255),
-	Subject_PIN int(4)
+	Subject_PIN int(4),
+	PRIMARY KEY (Subject_ID)
 );
 
 
@@ -26,7 +27,7 @@ CREATE TABLE comments (
 	Message_ID int NOT NULL,
 	Comment_body varchar(255), 
 	PRIMARY KEY (Comment_ID),
-	FOREIGN KEY (Message_id) REFERENCES messages(Message_ID)
+	FOREIGN KEY (Message_ID) REFERENCES messages(Message_ID)
 );
 
 
@@ -36,12 +37,12 @@ CREATE TABLE messages (
 	User_ID int NOT NULL,
 	Message_body varchar (500),
 	Answer varchar(500),
-	Subject_ID varchar(255),
+	Subject_ID int NOT NULL,
 	PRIMARY KEY (Message_ID),
 	FOREIGN KEY (Subject_ID) REFERENCES subject(Subject_ID)
 );
 
-
+// Procedure that can be called to add a student
 DELIMITER //
 CREATE PROCEDURE addStudent (IN student_name VARCHAR(255), IN student_email VARCHAR(255), IN student_password VARCHAR(255))
 BEGIN
@@ -49,6 +50,8 @@ BEGIN
 END //
 DELIMITER ;
 
+
+// Procedure that can be called to add a teacher
 DELIMITER //
 CREATE PROCEDURE addTeacher (IN teacher_name VARCHAR(255), IN teacher_email VARCHAR(255), IN teacher_password VARCHAR(255), IN teacher_subject VARCHAR(255), IN teacher_subjectPIN INT(4), IN teacher_picFilename VARCHAR(255))
 BEGIN
@@ -58,8 +61,11 @@ BEGIN
 END //
 DELIMITER ;
 
+// View to see messages and comments - to be changed to accomodate the current setup of the tables etc.
 // CREATE VIEW message_view AS SELECT Message_body, Answer, Comment_1, Comment_2, Comment_3, Comment_4, Comment_5 FROM messages;
 
+
+// Procedure to add a message, needs to be adjusted to house the current setup
 DELIMITER //
 CREATE PROCEDURE addMessage (IN message_User_ID INT, IN message_message_body VARCHAR(500), IN message_subject VARCHAR(255))
 BEGIN
@@ -67,7 +73,7 @@ BEGIN
 END //
 DELIMITER ;
 
-// remember to match to the correct message with the ID etc.
+// Procedure to add answer to messages, skim over and adjust
 DELIMITER //
 CREATE PROCEDURE addAnswerToMessage (IN messageID INT, IN answerText VARCHAR(500))
 BEGIN
