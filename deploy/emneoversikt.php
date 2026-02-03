@@ -6,9 +6,10 @@
     $sub_database = "test";
     $table_name = "register";
 
+    /*KOPIERT FRA SUBJECT_MESSAGES AND THEREFORE DOES NOT WORK*/
     try {
         $stmt = $pdo->prepare(
-            "select emne_id, message 
+            "select emne_id, message  
             from mock_database 
             where emne_id = :subject_code"
         );
