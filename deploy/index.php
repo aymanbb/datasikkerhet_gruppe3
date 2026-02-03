@@ -17,7 +17,7 @@
         die("Database connection failed: " . $e->getMessage());
     }
 
-        $message = "";
+    $message = "";
 
     // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
