@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 <!DOCTYPE html>
 <html lang="en">
     <head>
-         <meta charset="UTF-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>$Emne-meldinger c:</title>
         <style>
@@ -150,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <a href="index.php">back to start =D</a>
         <a href="#send_message" id="skip">Jump to contribute</a>
         <section>
-        <h1>Meldinger for emnet: $variabelnavn her</h1>
+        <h1>Meldinger for $emnenavn</h1>
         <?php foreach ($subject_messages as $subject_message): ?>
             <article>
                 <h3>Fra anonym:</h3>
