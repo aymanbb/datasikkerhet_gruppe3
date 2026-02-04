@@ -12,6 +12,8 @@
     - [ ] redirect til emneside med pinkode som parameter?
         > parameter, eller en annen måte å gjøre det på?
         > finner emne etter parameter og fyller ut siden 
+        - [x] implementert
+        - [ ] testet
 
 - [ ] index.php
     - [ ] faktisk kunne logge inn
@@ -38,6 +40,9 @@
     - [ ] migrer til reell database
     - [ ] ordne backup
 
+    - [ ] Migrere til stored procedures(?)
+
+
 ## Mid prioritet
 - [ ] navigasjon frem og tilbake på sider
 - [ ] skjule ip og filnavn i url-bar
@@ -45,3 +50,5 @@
 - [ ] Rydde på server
 - [ ] refaktorere...
 - [ ] rate limiting på alle requests
+- [ ] Sikre databasetilkoblingen, 
+    > flytte ut i config-fil antakelig
