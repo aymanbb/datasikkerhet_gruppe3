@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Subject pincode Login</title>
 </head>
 <body>
+    <a href="index.php">Home</a>
     <form method="post">
         <label for="pincode">Pincode:</label><br>
         <input
