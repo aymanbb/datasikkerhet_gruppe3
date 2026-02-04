@@ -1,4 +1,4 @@
-// code for backup
+# code for backup
 #!/bin/bash
 
 # Variables
@@ -11,8 +11,8 @@ TIMESTAMP=$(date +"%F")
 # Backup command
 mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/$DB_NAME-$TIMESTAMP.sql
 
-# Optional: Compress the backup
+# Zipping the backup to save storage
 gzip $BACKUP_DIR/$DB_NAME-$TIMESTAMP.sql
 
-
-// 0 0 1-31/2 * * /path/to/your/backup/script.sh
+# corn scheduling to backup the server every other midnight
+0 0 1-31/2 * * /path/to/your/backup/script.sh
