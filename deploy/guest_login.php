@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $params = http_build_query([
                         'ref' => $submitted_subject_pin
                     ]);
-                    header("Location: emneoversikt.php?ref=" . $params, true, 303);
+                    header("Location: subject_messages.php?ref=" . $params, true, 303);
                     exit;
                 }
 

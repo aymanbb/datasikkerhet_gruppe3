@@ -20,6 +20,7 @@ try {
 }
 
 $message = "";
+// NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 $subject_code = "itf1000";
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
