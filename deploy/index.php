@@ -1,6 +1,6 @@
 <?php
     $host = '127.0.0.1';
-    $dbname = "test_database";
+    $dbname = "g3_database_actual";
     $dbuser = "test_user";
     $dbpass = "strong_password";
     $sub_database = "test";
@@ -134,6 +134,7 @@
         <a href="guest.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
+        <a href="
     </section>
 </body>
 </html>
