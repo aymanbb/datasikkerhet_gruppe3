@@ -1,0 +1,18 @@
+// code for backup
+#!/bin/bash
+
+# Variables
+DB_NAME="g3_database_actual"
+DB_USER="your_database_user"
+DB_PASS="your_database_password"
+BACKUP_DIR="/path/to/your/backup/directory"
+TIMESTAMP=$(date +"%F")
+
+# Backup command
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/$DB_NAME-$TIMESTAMP.sql
+
+# Optional: Compress the backup
+gzip $BACKUP_DIR/$DB_NAME-$TIMESTAMP.sql
+
+
+// 0 0 1-31/2 * * /path/to/your/backup/script.sh
