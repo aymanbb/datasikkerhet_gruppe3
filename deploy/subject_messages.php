@@ -1,11 +1,15 @@
 <?php
 
-$host = '127.0.0.1';
-$dbname = "test_database";
-$dbuser = "test_user";
-$dbpass = "strong_password";
-$sub_database = "test";
-$table_name = "register";
+    $host = '127.0.0.1';
+    $dbname = "g3_database_actual";
+    $dbuser = "test_user";
+    $dbpass = "strong_password";
+    $users_table = "users";
+    $subject_table = "subject";
+    $messages_table = "messages";
+    $comments_table = "comments";
+    $user_id = $_SESSION['user'];
+
 try {
     $pdo = new PDO(
         "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
@@ -24,11 +28,14 @@ $subject_code = "itf1000";
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
+        //User_ID
         $new_message = htmlspecialchars($_GET["test-melding"]);
+        //answer
+        //subject_ID
 
         try{
             $stmt = $pdo->prepare(
-                "INSERT INTO mock_database(emne_id, message) 
+                "INSERT INTO $messages_table(User_ID, Message_body, Answer, Subject_ID) 
                 VALUES (:subject_code, :new_message)"
             );
 

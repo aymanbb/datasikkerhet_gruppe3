@@ -1,10 +1,12 @@
 <?php
     $host = '127.0.0.1';
-    $dbname = "test_database";
+    $dbname = "g3_database_actual";
     $dbuser = "test_user";
     $dbpass = "strong_password";
-    $sub_database = "test";
-    $table_name = "register";
+    $users_table = "users";
+    $subject_table = "subject";
+    $messages_table = "messages";
+    $comments_table = "comments";
     try {
         $pdo = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
@@ -37,8 +39,9 @@
 
                     try {
                         $stmt = $pdo->prepare(
-                            "INSERT INTO $table_name (username, email, password, subject, subject_pin, subject_code)
-                            VALUES (:username, :email, :password, :subject, :subject_pin, :subject_code)"
+                            "INSERT INTO $users_table (Name_User, Email, Password, Is_teacher)
+                            VALUES (:username, :email, :password, 1)"
+                            //ignoring "picture filename", "subject_ID", "subject code", "subject pin" and "session_cookie"
                         );
 
                         $stmt->execute([

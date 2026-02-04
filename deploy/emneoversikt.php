@@ -1,10 +1,10 @@
 <?php
     $host = '127.0.0.1';
-    $dbname = "test_database";
+    $dbname = "g3_database_actual";
     $dbuser = "test_user";
     $dbpass = "strong_password";
-    $sub_database = "test";
-    $table_name = "register";
+    $users_table = "users";
+    $subject_table = "subject";
 
     /*KOPIERT FRA SUBJECT_MESSAGES AND THEREFORE DOES NOT WORK*/
     try {
