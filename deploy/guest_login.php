@@ -17,18 +17,15 @@ try {
     );
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
-}
-
-$pincode_valid = false;
-
+}   
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Check get matching subjects to pin code. Should just be one.
     if(isset($_POST['request_view_subject'])){
-        $pin_code = trim($_POST["subject_pincode"]);
+        $submitted_subject_pin = trim($_POST["subject_pincode"]);
 
-        if (empty($pin_code)) {
+        if (empty($submitted_subject_pin)) {
             $message = "Boop.";
         } else {
             try {
@@ -39,12 +36,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 );
 
                 $stmt->execute(
-                    [":subm_pin" => $pin_code]
+                    [":subm_pin" => $submitted_subject_pin]
                 );
 
                 $subject_match = $stmt->fetch();
                 if($subject_match['subject_pin'] != null){
-                    $pincode_valid = true;
+                    $params = http_build_query([
+                        'ref' => $submitted_subject_pin
+                    ]);
+                    header("Location: emneoversikt.php?ref=" . $params, true, 303);
+                    exit;
                 }
 
             }catch(PDOException $e) {
@@ -76,11 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         >
         <br><br>
         <button name="request_view_subject" type="submit">View subject page</button>
-        <?php if ($pincode_valid == true): ?>
-            <p class="validity">wait, it's real?</p>
-        <?php else: ?>
-                <p class="validity">Not real so far</p>
-        <?php endif; ?>
     </form>
 </body>
 </html>

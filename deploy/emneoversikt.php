@@ -6,6 +6,10 @@
     $sub_database = "test";
     $table_name = "register";
 
+    // FIXME: Ingen connection/PDO fra databasen her enda. 
+
+    // NOTE: det skal være mulig å hente en $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
+
     /*KOPIERT FRA SUBJECT_MESSAGES AND THEREFORE DOES NOT WORK*/
     try {
         $stmt = $pdo->prepare(

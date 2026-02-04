@@ -10,6 +10,8 @@
     - [x] Form med emne-pin og submit knapp.
         > sjekker om emne-pin eksisterer. ingen redirect
     - [ ] redirect til emneside med pinkode som parameter?
+        > parameter, eller en annen måte å gjøre det på?
+        > finner emne etter parameter og fyller ut siden 
 
 - [ ] index.php
     - [ ] faktisk kunne logge inn
