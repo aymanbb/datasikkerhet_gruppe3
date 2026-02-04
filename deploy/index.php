@@ -134,7 +134,7 @@
         <a href="guest.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
-        <a href="
+        <a href="#"></a>
     </section>
 </body>
 </html>
