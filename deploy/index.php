@@ -5,8 +5,6 @@
     $dbpass = "strong_password";
     $users_table = "users";
     $subject_table = "subject";
-    $messages_table = "messages";
-    $comments_table = "comments";
 
     try {
         $pdo = new PDO(
@@ -138,7 +136,7 @@
         <a href="guest.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
-        <a href="#"></a>
+        <a href="emneoversikt.php">Emneoversikt ditto</a>
     </section>
 </body>
 </html>

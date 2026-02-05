@@ -5,13 +5,30 @@
     $dbpass = "strong_password";
     $users_table = "users";
     $subject_table = "subject";
+    $messages_table = "messages";
+    $comments_table = "comments";
+    /*$subject_code = $_GET['subject_code'] ?? null; Denne må definere ALLE fagene brukeren har tilgang til*/
+    $subject_code = 1234;
+
+        try {
+        $pdo = new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $dbuser,
+            $dbpass,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        );
+    } catch (PDOException $e) {
+        die("Database connection failed: " . $e->getMessage());
+    }
 
     /*KOPIERT FRA SUBJECT_MESSAGES AND THEREFORE DOES NOT WORK*/
     try {
         $stmt = $pdo->prepare(
-            "select emne_id, message  
-            from mock_database 
-            where emne_id = :subject_code"
+            "select Subject_ID, Subject_name  
+            from $subject_table 
+            where Subject_PIN = :subject_code"
         );
 
         $stmt->execute(
@@ -52,7 +69,7 @@
         <section>
             <h1>Emner du har tilgang til</h1>
             <?php foreach ($subjects as $subject): 
-                $name = $subject['name'];
+                $name = $subject['Subject_name'];
             ?>
                 <article>
                     <a href="#"><h2><?= htmlspecialchars($name) ?></h2></a>

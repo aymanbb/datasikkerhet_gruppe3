@@ -5,7 +5,6 @@
     $dbuser = "test_user";
     $dbpass = "strong_password";
     $users_table = "users";
-    $subject_table = "subject";
     $messages_table = "messages";
     $comments_table = "comments";
     $user_id = $_SESSION['user'];
@@ -24,11 +23,10 @@ try {
 }
 
 $message = "";
-$subject_code = "itf1000";
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
-        //User_ID
+        $user = $user_id;
         $new_message = htmlspecialchars($_GET["test-melding"]);
         //answer
         //subject_ID
@@ -36,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         try{
             $stmt = $pdo->prepare(
                 "INSERT INTO $messages_table(User_ID, Message_body, Answer, Subject_ID) 
-                VALUES (:subject_code, :new_message)"
+                VALUES (:user, :subject_code, :new_message)"
             );
 
             $stmt->execute([
@@ -54,9 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     try {
         $stmt = $pdo->prepare(
-            "select emne_id, message 
-            from mock_database 
-            where emne_id = :subject_code"
+            "select Subject_ID, Message_body 
+            from $messages_table 
+            where Subject_ID = :subject_code"
         );
 
         $stmt->execute(
@@ -85,16 +83,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     position: fixed;
                     right: 3rem;
                     margin: 1rem;
-                    border-radius: 98%;
                     padding: 1rem;
                     height: 3rem;
                     width: fit-content;
                     align-items: center;
                     display: flex;
-                    background-color: #cecece;
                     font-size: 16px;
                     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
                     text-decoration: none;
+                    border: 3px solid black;
                 }
 
                 button {
@@ -116,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         margin: 1rem auto 1rem auto;
                         
 
-                        .message{
+                        .melding{
                             border: 1px solid black;
                             padding: 4px;
                         }
@@ -132,17 +129,20 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         margin: 3rem auto auto auto;
                     }
 
+                    img{
+                        max-width: 150px;
+                    }
+
                     form {
                         display: flex;
                         flex-direction: column;
-                        padding: 0 2rem 2rem 2rem;
+                        border: 3px solid black;
+                        padding: 2rem;
                         width: 50dvw;
                         margin: 1rem auto 1rem auto;
 
                         textarea {
                             resize: none;
-                            border: 3px solid black;
-                            max-width: 40dvw;
                         }
 
                         button {
@@ -157,7 +157,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <a href="index.php">back to start =D</a>
         <a href="#send_message" id="skip">Jump to contribute</a>
         <section>
-        <h1>Meldinger for $emnenavn</h1>
+        <h1>$emnenavn</h1>
+            <article>
+                <h2>Foreleser</h2>
+                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
+                <img src="" alt="Photo of the lecturer">
+            </article>
         <?php foreach ($subject_messages as $subject_message): ?>
             <article>
                 <h3>Fra anonym:</h3>

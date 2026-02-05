@@ -29,19 +29,18 @@
                 $email = trim(string: $_POST["register_email"]);
                 $password = $_POST["register_password"];
                 $subject = trim($_POST["register_subject"]);
-                $subject_code = trim($_POST["register_subject_code"]);
                 $pin = $_POST["register_pin"];
                 $image = $_POST["register_image"];
 
-                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($subject_code) || empty($pin)) {
+                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($pin)) {
                     $message = "All fields are required.";
                 } else {
 
                     try {
                         $stmt = $pdo->prepare(
-                            "INSERT INTO $users_table (Name_User, Email, Password, Is_teacher)
-                            VALUES (:username, :email, :password, 1)"
-                            //ignoring "picture filename", "subject_ID", "subject code", "subject pin" and "session_cookie"
+                            "INSERT INTO $users_table (Name_User, Email, Password, Is_teacher, Subject_name, Subject_PIN)
+                            VALUES (:username, :email, :password, 1, :subject, :subject_pin)"
+                            //ignoring "picture filename", "subject_ID", "subject pin" and "session_cookie"
                         );
 
                         $stmt->execute([
@@ -50,7 +49,6 @@
                             ":password" => $password,
                             ":subject" => $subject,
                             ":subject_pin" => $pin,
-                            ":subject_code" => $subject_code,
                         ]);
 
                         $message = "Registration successful!";
@@ -114,9 +112,6 @@
 
             <label for="subject-name">Name of Subject:</label>
             <input type="text" id="subject-name" name="register_subject" required>
-
-            <label for="subject-code">Subject code:</label>
-            <input type="text" id="subject-code" name="register_subject_code" maxlength="8" minlength="8" pattern="[A-Za-z]{3}[0-9]{5}" required>
 
             <label for="subject-pin">PIN for Subject:</label>
             <input type="text" id="subject-pin" name="register_pin" pattern="[0-9]*" maxlength="4" required>
