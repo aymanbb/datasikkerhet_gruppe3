@@ -41,7 +41,8 @@
     - [ ] ordne backup
 
     - [ ] Migrere til stored procedures(?)
-
+    
+ - [ ] koble opp bilde-mottakelse i php-fila til "registrer foreleser", akkurat nå blir det feltet ignorert
 
 ## Mid prioritet
 - [ ] navigasjon frem og tilbake på sider

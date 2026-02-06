@@ -154,6 +154,7 @@ class Database
                 ]);
 
                 return true;
+                
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     $message = "Username or email already exists.";
