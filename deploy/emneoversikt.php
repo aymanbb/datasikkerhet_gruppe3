@@ -23,6 +23,8 @@
         die("Database connection failed: " . $e->getMessage());
     }
 
+    // FIXME: Ingen connection/PDO fra databasen her enda. 
+
     /*KOPIERT FRA SUBJECT_MESSAGES AND THEREFORE DOES NOT WORK*/
     try {
         $stmt = $pdo->prepare(

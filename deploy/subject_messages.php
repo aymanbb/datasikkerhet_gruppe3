@@ -23,6 +23,8 @@ try {
 }
 
 $message = "";
+// NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
+$subject_code = "itf1000";
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
@@ -60,11 +62,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt->execute(
             [":subject_code" => $subject_code]
         );
+
         $subject_messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        catch(PDOException $e) {
-            die("Serious error message for serious problems" . $e->getMessage());
-        }
+        
+    }catch(PDOException $e) {
+        die("Serious error message for serious problems" . $e->getMessage());
+    }
 }
 
 ?>

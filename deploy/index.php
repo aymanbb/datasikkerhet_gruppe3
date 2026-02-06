@@ -19,7 +19,7 @@
         die("Database connection failed: " . $e->getMessage());
     }
 
-        $message = "";
+    $message = "";
 
     // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -133,7 +133,7 @@
     </article>
 
     <section>
-        <a href="guest.php">Continue as Guest</a>
+        <a href="guest_login.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
         <a href="emneoversikt.php">Emneoversikt ditto</a>
