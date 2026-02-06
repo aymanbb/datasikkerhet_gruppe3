@@ -1,22 +1,11 @@
 <?php
-    $host = '127.0.0.1';
-    $dbname = "g3_database_actual";
-    $dbuser = "test_user";
-    $dbpass = "strong_password";
-    $users_table = "users";
-    $subject_table = "subject";
+    require_once __DIR__ . '/includes/config.php';
+    require_once __DIR__ . '/includes/db.php';
+    require_once __DIR__ . '/includes/session.php';
 
-    try {
-        $pdo = new PDO(
-            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-            $dbuser,
-            $dbpass,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
-    } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
+    if (isset($_SESSION['user'])) {
+        header('Location: index.php');
+        exit;
     }
 
         $message = "";
@@ -31,6 +20,25 @@
             if (empty($username) || empty($password)) {
                 $message = "All fields are required.";
             } else {
+		try {
+           	    $stmt = $pdo->prepare("SELECT id, password, role FROM t_users WHERE username = :username");
+            	    $stmt->execute(['username' => $username]);
+            	    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            	    if ($user && password_verify($password, $user['password'])) {
+                	session_regenerate_id(true);
+                	$_SESSION['user'] = [
+                       'id' => $user['id'],
+                       'username' => $username
+                	];
+                	header("Location: success.php");
+                	exit;
+            	    } else {
+                	$_SESSION['login_error'] = "Invalid username or password.";
+            	      }
+        } catch (PDOException $e) {
+            $_SESSION['login_error'] = "Server error. Please try again.";
+        }
 
             }
         }elseif(isset($_POST['register_submit'])){
