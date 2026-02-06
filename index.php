@@ -1,7 +1,23 @@
 <?php
-    require_once __DIR__ . '/includes/config.php';
-    require_once __DIR__ . '/includes/db.php';
-    require_once __DIR__ . '/includes/session.php';
+    $host = '127.0.0.1';
+    $dbname = "g3_database_actual";
+    $dbuser = "test_user";
+    $dbpass = "strong_password";
+    $users_table = "users";
+    $subject_table = "subject";
+
+    try {
+        $pdo = new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $dbuser,
+            $dbpass,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        );
+    } catch (PDOException $e) {
+        die("Database connection failed: " . $e->getMessage());
+    }
 
         $message = "";
 
@@ -15,40 +31,22 @@
             if (empty($username) || empty($password)) {
                 $message = "All fields are required.";
             } else {
-		try {
-           	    $stmt = $pdo->prepare("SELECT id, password, role FROM t_users WHERE username = :username");
-            	    $stmt->execute(['username' => $username]);
-            	    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            	    if ($user && password_verify($password, $user['password'])) {
-                	session_regenerate_id(true);
-                	$_SESSION['user'] = [
-                       'id' => $user['id'],
-                       'username' => $username
-                	];
-                	header("Location: success.php");
-                	exit;
-            	    } else {
-                	$_SESSION['login_error'] = "Invalid username or password.";
-            	      }
-        } catch (PDOException $e) {
-            $_SESSION['login_error'] = "Server error. Please try again.";
-        }
 
             }
         }elseif(isset($_POST['register_submit'])){
 
 
             $username = trim($_POST["register_username"]);
-            $email = trim(string: $_POST["register_email"]);
-            $password = password_hash($_POST['register_password'], PASSWORD_DEFAULT);;
+            $email = trim($_POST["register_email"]);
+            $password = ($_POST["register_password"]);
 
             if (empty($username) || empty($email) || empty($password)) {
                 $message = "All fields are required.";
             } else {
+
                 try {
                     $stmt = $pdo->prepare(
-                        "INSERT INTO t_users (username, email, password)
+                        "INSERT INTO $users_table (Name_User, Email, Password)
                         VALUES (:username, :email, :password)"
                     );
 
@@ -138,6 +136,7 @@
         <a href="guest.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
+        <a href="emneoversikt.php">Emneoversikt ditto</a>
     </section>
 </body>
 </html>
