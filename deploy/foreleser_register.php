@@ -1,10 +1,12 @@
 <?php
     $host = '127.0.0.1';
-    $dbname = "test_database";
+    $dbname = "g3_database_actual";
     $dbuser = "test_user";
     $dbpass = "strong_password";
-    $sub_database = "test";
-    $table_name = "register";
+    $users_table = "users";
+    $subject_table = "subject";
+    $messages_table = "messages";
+    $comments_table = "comments";
     try {
         $pdo = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
@@ -27,18 +29,18 @@
                 $email = trim(string: $_POST["register_email"]);
                 $password = $_POST["register_password"];
                 $subject = trim($_POST["register_subject"]);
-                $subject_code = trim($_POST["register_subject_code"]);
                 $pin = $_POST["register_pin"];
                 $image = $_POST["register_image"];
 
-                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($subject_code) || empty($pin)) {
+                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($pin)) {
                     $message = "All fields are required.";
                 } else {
 
                     try {
                         $stmt = $pdo->prepare(
-                            "INSERT INTO $table_name (username, email, password, subject, subject_pin, subject_code)
-                            VALUES (:username, :email, :password, :subject, :subject_pin, :subject_code)"
+                            "INSERT INTO $users_table (Name_User, Email, Password, Is_teacher, Subject_name, Subject_PIN)
+                            VALUES (:username, :email, :password, 1, :subject, :subject_pin)"
+                            //ignoring "picture filename", "subject_ID", "subject pin" and "session_cookie"
                         );
 
                         $stmt->execute([
@@ -47,7 +49,6 @@
                             ":password" => $password,
                             ":subject" => $subject,
                             ":subject_pin" => $pin,
-                            ":subject_code" => $subject_code,
                         ]);
 
                         $message = "Registration successful!";
@@ -111,9 +112,6 @@
 
             <label for="subject-name">Name of Subject:</label>
             <input type="text" id="subject-name" name="register_subject" required>
-
-            <label for="subject-code">Subject code:</label>
-            <input type="text" id="subject-code" name="register_subject_code" maxlength="8" minlength="8" pattern="[A-Za-z]{3}[0-9]{5}" required>
 
             <label for="subject-pin">PIN for Subject:</label>
             <input type="text" id="subject-pin" name="register_pin" pattern="[0-9]*" maxlength="4" required>

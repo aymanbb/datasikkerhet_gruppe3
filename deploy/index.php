@@ -1,9 +1,11 @@
 <?php
     $host = '127.0.0.1';
-    $dbname = "test_database";
+    $dbname = "g3_database_actual";
     $dbuser = "test_user";
     $dbpass = "strong_password";
-    $sub_database = "test";
+    $users_table = "users";
+    $subject_table = "subject";
+
     try {
         $pdo = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
@@ -35,8 +37,8 @@
 
 
             $username = trim($_POST["register_username"]);
-            $email = trim(string: $_POST["register_email"]);
-            $password = $_POST["register_password"];
+            $email = trim($_POST["register_email"]);
+            $password = ($_POST["register_password"]);
 
             if (empty($username) || empty($email) || empty($password)) {
                 $message = "All fields are required.";
@@ -44,7 +46,7 @@
 
                 try {
                     $stmt = $pdo->prepare(
-                        "INSERT INTO register (username, email, password)
+                        "INSERT INTO $users_table (Name_User, Email, Password)
                         VALUES (:username, :email, :password)"
                     );
 
@@ -134,6 +136,7 @@
         <a href="guest_login.php">Continue as Guest</a>
         <a href="#">Forgotten password?</a>
         <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
+        <a href="emneoversikt.php">Emneoversikt ditto</a>
     </section>
 </body>
 </html>
