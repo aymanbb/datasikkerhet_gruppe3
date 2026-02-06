@@ -1,24 +1,7 @@
 <?php
-    $host = '127.0.0.1';
-    $dbname = "g3_database_actual";
-    $dbuser = "test_user";
-    $dbpass = "strong_password";
-    $users_table = "users";
-    $subject_table = "subject";
-    $messages_table = "messages";
-    $comments_table = "comments";
-    try {
-        $pdo = new PDO(
-            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-            $dbuser,
-            $dbpass,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
-    } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
-    }
+    require_once __DIR__ . '/includes/config.php';
+    require_once __DIR__ . '/includes/db.php';
+    require_once __DIR__ . '/includes/session.php';
 
     $message = "";
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
