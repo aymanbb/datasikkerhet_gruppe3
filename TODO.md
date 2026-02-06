@@ -53,3 +53,5 @@
 - [ ] rate limiting på alle requests
 - [ ] Sikre databasetilkoblingen, 
     > flytte ut i config-fil antakelig
+- [ ] Slette test-bruker i database
+- [ ] sikre brukertilganger generelt!
