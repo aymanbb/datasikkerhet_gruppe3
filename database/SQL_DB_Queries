@@ -74,3 +74,13 @@ BEGIN
 	WHERE Message_ID = messageID AND answerText IS NULL;
 END //
 DELIMITER ;
+
+// Procedure to add answer to messages, skim over and adjust
+DELIMITER //
+CREATE PROCEDURE addComment (IN messageID INT, IN comment VARCHAR(255))
+BEGIN
+	INSERT INTO comments VALUES (messageID,	comment)
+END //
+DELIMITER ;
+
+
