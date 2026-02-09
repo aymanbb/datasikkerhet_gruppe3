@@ -6,7 +6,6 @@ CREATE TABLE users (
 	Password varchar(50),
 	Is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
 	Picture_filename varchar(255),
-	Session_cookie varchar(32),
 	Subject_PIN int(4),
 	Subject_name varchar(255),
 	PRIMARY KEY (User_ID),
