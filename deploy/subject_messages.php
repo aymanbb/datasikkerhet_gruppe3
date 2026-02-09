@@ -150,6 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
                         button {
                             padding: 3px 10px 3px 10px;
+                            margin-top: 0.5rem;
                         }
                     }
                 }
@@ -158,13 +159,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     </head>
     <body>
         <a href="index.php">back to start =D</a>
-        <a href="#send_message" id="skip">Jump to contribute</a>
+        <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
         <h1>$emnenavn</h1>
             <article>
                 <h2>Foreleser</h2>
                 <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-                <img src="" alt="Photo of the lecturer">
+                <img src="" alt="Bilde av foreleser">
             </article>
         <?php foreach ($subject_messages as $subject_message): ?>
             <article>
