@@ -12,35 +12,35 @@ declare(strict_types=1);
 /// DOC: Functions for validating site data.
 
 function validateUsername($username):bool{
-    return false;
+    return true;
 
 }
 
 function validateEmail($email):bool{
-    return false;
+    return true;
 
 }
 
 function validatePassword($password):bool{
-    return false;
+    return true;
 
 }
 
 function validateSubject($subject):bool{
-    return false;
+    return true;
 
 }
 
 function validateSubjectCode(string $subject_code):bool{
-    return false;
+    return true;
 }
 
 function validateSubjectPin($pin):bool{
-    return false;
+    return true;
 }
 
 function validateFreetext($text):bool{
-    return false;
+    return true;
 }
 
 
