@@ -79,7 +79,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE addComment (IN messageID INT, IN comment VARCHAR(255))
 BEGIN
-	INSERT INTO comments VALUES (messageID,	comment)
+	INSERT INTO comments VALUES (messageID,	comment);
 END //
 DELIMITER ;
 
