@@ -114,7 +114,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     flex-direction: column;
 
                     h1 {
+                        justify-content: center;
+                        display: flex;
+                    }
+
+                    nav ul {
+                        padding: 0;
+                        list-style: none;
                         margin: auto;
+                        display: flex;
+                        justify-content: center;
+
+                        li {
+                            margin: 0.5rem;
+
+                            a{
+                                text-decoration: none;
+                            }
+                        }
                     }
 
                     article {
@@ -134,10 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 article {
                     display: flex;
                     flex-direction: column;
+                    border: 3px solid black;
+                    padding: 2rem;
+                    width: 50dvw;
+                    margin: 1rem auto 1rem auto;
 
                     h2{
                         width: 50dvw;
-                        margin: 3rem auto auto auto;
                     }
 
                     img{
@@ -147,8 +167,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     form {
                         display: flex;
                         flex-direction: column;
-                        border: 3px solid black;
-                        padding: 2rem;
                         width: 50dvw;
                         margin: 1rem auto 1rem auto;
 
@@ -168,20 +186,28 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
-        <h1>$emnenavn</h1>
-        <nav><a href="index.php">Gå til forsiden</a></nav>
-        <article>
-            <h2>Foreleser</h2>
-            <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-            <img src="" alt="Bilde av foreleser">
-        </article>
-        <?php foreach ($subject_messages as $subject_message): ?>
+            <h1>$emnenavn</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Gå til forsiden</a></li>
+                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
+                    <li><a href="#">Glemt passord?</a></li>
+                    <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
+                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+                </ul>
+            </nav>
             <article>
-                <h3>Fra anonym:</h3>
-                <p><?= htmlspecialchars($subject_message['emne_id']) ?></p>
-                <p class="message"><?= htmlspecialchars($subject_message['message']) ?></p>
+                <h2>Foreleser</h2>
+                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
+                <img src="" alt="Bilde av foreleser">
             </article>
-        <?php endforeach; ?>
+            <?php foreach ($subject_messages as $subject_message): ?>
+                <article>
+                    <h3>Fra anonym:</h3>
+                    <p><?= htmlspecialchars($subject_message['emne_id']) ?></p>
+                    <p class="message"><?= htmlspecialchars($subject_message['message']) ?></p>
+                </article>
+            <?php endforeach; ?>
         </section>
         <article>
             <h2>Delta i samtalen!</h2>

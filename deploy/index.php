@@ -80,6 +80,7 @@
                 margin: 3rem;
 
                 nav ul {
+                    padding: 0;
                     list-style: none;
                     margin: auto;
                     display: flex;
@@ -130,7 +131,7 @@
     <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <nav>
         <ul>
-            <li><a href="guest.php">Fortsett som gjest</a></li>
+            <li><a href="guest_login.php">Fortsett som gjest</a></li>
             <li><a href="#">Glemt passord?</a></li>
             <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
             <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
