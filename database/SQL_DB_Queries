@@ -82,4 +82,5 @@ BEGIN
 END //
 DELIMITER ;
 
+CREATE USER 'user_rick'@'localhost' IDENTIFIED BY 'Never gonna let you down';
 
