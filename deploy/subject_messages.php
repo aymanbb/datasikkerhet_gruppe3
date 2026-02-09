@@ -158,7 +158,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
                     h2{
                         width: 50dvw;
-                        margin: 3rem auto auto auto;
                     }
 
                     img{
