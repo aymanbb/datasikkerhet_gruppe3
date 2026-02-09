@@ -83,4 +83,5 @@ END //
 DELIMITER ;
 
 CREATE USER 'user_rick'@'localhost' IDENTIFIED BY 'Never gonna let you down';
-
+GRANT SELECT, INSERT ON g3_database_actual.* TO 'user_rick'@'localhost';
+GRANT EXECUTE ON g3_database_actual.* TO 'user_rick'@'localhost';
