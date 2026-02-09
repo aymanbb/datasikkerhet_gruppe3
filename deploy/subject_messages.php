@@ -97,6 +97,14 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     border: 3px solid black;
                 }
 
+                nav{
+                    margin: 0.5rem;
+
+                    a{
+                        text-decoration: none;
+                    }
+                } 
+
                 button {
                     max-width: max-content;
                 }
@@ -158,15 +166,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         </style>
     </head>
     <body>
-        <a href="index.php">back to start =D</a>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
         <h1>$emnenavn</h1>
-            <article>
-                <h2>Foreleser</h2>
-                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-                <img src="" alt="Bilde av foreleser">
-            </article>
+        <nav><a href="index.php">Gå til forsiden</a></nav>
+        <article>
+            <h2>Foreleser</h2>
+            <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
+            <img src="" alt="Bilde av foreleser">
+        </article>
         <?php foreach ($subject_messages as $subject_message): ?>
             <article>
                 <h3>Fra anonym:</h3>
