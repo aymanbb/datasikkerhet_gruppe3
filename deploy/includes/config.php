@@ -11,3 +11,10 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 define('BASE_URL', $basePath);
 define('ASSETS_URL', $basePath . '/assets');
 
+
+// $host = '127.0.0.1';
+// $dbname = "g3_database_actual";
+// $dbuser = "test_user";
+// $dbpass = "strong_password";
+// $users_table = "users";
+// $subject_table = "subject";

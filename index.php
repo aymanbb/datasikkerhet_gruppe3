@@ -4,41 +4,41 @@
     require_once __DIR__ . '/includes/session.php';
 
     if (isset($_SESSION['user'])) {
-        header('Location: index.php');
+    header('Location: index.php');
         exit;
     }
 
-        $message = "";
+    $message = "";
 
-    // Handle form submission
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-        if(isset($_POST['login_submit'])){
-            $username = trim($_POST["login_username"]);
-            $password = $_POST["login_password"];
+    if(isset($_POST['login_submit'])){
+        $username = trim($_POST["login_username"]);
+        $password = $_POST["login_password"];
 
-            if (empty($username) || empty($password)) {
-                $message = "All fields are required.";
-            } else {
-		try {
-           	    $stmt = $pdo->prepare("SELECT id, password, role FROM t_users WHERE username = :username");
-            	    $stmt->execute(['username' => $username]);
-            	    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (empty($username) || empty($password)) {
+            $message = "All fields are required.";
+        } else {
+            try {
+                $stmt = $pdo->prepare("SELECT id, password, role FROM t_users WHERE username = :username");
+                $stmt->execute(['username' => $username]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            	    if ($user && password_verify($password, $user['password'])) {
-                	session_regenerate_id(true);
-                	$_SESSION['user'] = [
-                       'id' => $user['id'],
-                       'username' => $username
-                	];
-                	header("Location: success.php");
-                	exit;
-            	    } else {
-                	$_SESSION['login_error'] = "Invalid username or password.";
-            	      }
-        } catch (PDOException $e) {
-            $_SESSION['login_error'] = "Server error. Please try again.";
-        }
+                if ($user && password_verify($password, $user['password'])) {
+                    session_regenerate_id(true);
+                        $_SESSION['user'] = [
+                            'id' => $user['id'],
+                            'username' => $username
+                        ];
+                        header("Location: success.php");
+                        exit;
+                    } else {
+                        $_SESSION['login_error'] = "Invalid username or password.";
+                    }
+                } catch (PDOException $e) {
+                    $_SESSION['login_error'] = "Server error. Please try again.";
+                }
 
             }
         }elseif(isset($_POST['register_submit'])){

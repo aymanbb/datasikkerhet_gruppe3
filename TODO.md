@@ -3,13 +3,13 @@
 
 - [ ] subject_messages.php 
     - [x] teste med å vise alle meldinger 
-    - [ ] Sende inn melding i et emne
-    - [ ] sortere viste meldinger på emne.
+    - [x] Sende inn melding i et emne
+    - [x] emneside. Viser meldinger som hører til emnet basert på url parameter.
 
 - [ ] Guest login page
     - [x] Form med emne-pin og submit knapp.
         > sjekker om emne-pin eksisterer. ingen redirect
-    - [ ] redirect til emneside med pinkode som parameter?
+    - [x] redirect til emneside med pinkode som parameter?
         > parameter, eller en annen måte å gjøre det på?
         > finner emne etter parameter og fyller ut siden 
         - [x] implementert
@@ -17,6 +17,8 @@
 
 - [ ] index.php
     - [ ] faktisk kunne logge inn
+        - [ ] redirect til emneloversikt.php om du er student
+        - [ ] redirect til subject_messages.php om du er foreleser
 
 - [ ] foreleser_register.php
     - [ ] lage en sjekk i foreleser_register.php som sjekker om emnenavn allerede eksisterer.
@@ -39,7 +41,6 @@
 - [ ] Database:
     - [ ] migrer til reell database
     - [ ] ordne backup
-
     - [ ] Migrere til stored procedures(?)
     
  - [ ] koble opp bilde-mottakelse i php-fila til "registrer foreleser", akkurat nå blir det feltet ignorert
@@ -55,3 +56,5 @@
     > flytte ut i config-fil antakelig
 - [ ] Slette test-bruker i database
 - [ ] sikre brukertilganger generelt!
+
+- [ ] integrere en form for logging?

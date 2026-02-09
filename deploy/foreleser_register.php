@@ -1,68 +1,28 @@
 <?php
-    $host = '127.0.0.1';
-    $dbname = "g3_database_actual";
-    $dbuser = "test_user";
-    $dbpass = "strong_password";
-    $users_table = "users";
-    $subject_table = "subject";
-    $messages_table = "messages";
-    $comments_table = "comments";
-    try {
-        $pdo = new PDO(
-            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-            $dbuser,
-            $dbpass,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
-    } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
-    }
+
+    require_once __DIR__ . '/includes/config.php';
+    require_once __DIR__ . '/includes/db.php';
+    require_once __DIR__ . '/includes/session.php';
+
+    $db = new Database();
 
     $message = "";
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        if(isset($_POST['foreleser_register_submit'])){
+            $username = trim($_POST["register_username"]);
+            $email = trim(string: $_POST["register_email"]);
+            $password = $_POST["register_password"];
+            $subject = trim($_POST["register_subject"]);
+            $pin = $_POST["register_pin"];
+            $image = $_POST["register_image"];
 
-            if(isset($_POST['foreleser_register_submit'])){
-
-                $username = trim($_POST["register_username"]);
-                $email = trim(string: $_POST["register_email"]);
-                $password = $_POST["register_password"];
-                $subject = trim($_POST["register_subject"]);
-                $pin = $_POST["register_pin"];
-                $image = $_POST["register_image"];
-
-                if (empty($username) || empty($email) || empty($password) || empty($subject) || empty($pin)) {
-                    $message = "All fields are required.";
-                } else {
-
-                    try {
-                        $stmt = $pdo->prepare(
-                            "INSERT INTO $users_table (Name_User, Email, Password, Is_teacher, Subject_name, Subject_PIN)
-                            VALUES (:username, :email, :password, 1, :subject, :subject_pin)"
-                            //ignoring "picture filename", "subject_ID", "subject pin" and "session_cookie"
-                        );
-
-                        $stmt->execute([
-                            ":username" => $username,
-                            ":email" => $email,
-                            ":password" => $password,
-                            ":subject" => $subject,
-                            ":subject_pin" => $pin,
-                        ]);
-
-                        $message = "Registration successful!";
-                    } catch (PDOException $e) {
-                        echo $e->getMessage();
-                        if ($e->getCode() == 23000) {
-                            $message = "Username or email already exists.";
-                        } else {
-                            $message = "An error occurred.";
-                        }
-                    }
-                }
+            if($db->userLecturerRegister($username, $email, $password, $subject, $subject_code, $pin, $image)){
+                //FIXME: some error message here
+            }else{
+                // FIXME: Some error message here
             }
         }
+    }
 
 ?>
 

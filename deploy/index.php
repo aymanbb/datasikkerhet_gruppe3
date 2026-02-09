@@ -1,105 +1,103 @@
 <?php
-    $host = '127.0.0.1';
-    $dbname = "g3_database_actual";
-    $dbuser = "test_user";
-    $dbpass = "strong_password";
-    $users_table = "users";
-    $subject_table = "subject";
 
-    try {
-        $pdo = new PDO(
-            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-            $dbuser,
-            $dbpass,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
-    } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
-    }
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/session.php';
 
-    $message = "";
+$db = new Database();
+$message = "";
 
-    // Handle form submission
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST['login_submit'])) { // Login for users and lecturers
+        $username = trim($_POST["login_username"]);
+        $password = $_POST["login_password"];
 
-        if(isset($_POST['login_submit'])){
-            $username = trim($_POST["login_username"]);
-            $password = $_POST["login_password"];
-
-            if (empty($username) || empty($password)) {
-                $message = "All fields are required.";
+        if (empty($username) || empty($password)) {
+            $message = "All fields are required.";
+        } else {
+            $user = $db->userFindByUsername($username);
+            if ($user && password_verify($password, $user['password'])) {
+                session_regenerate_id(true);
+                $_SESSION['user'] = [
+                    'id' => $user['id'],
+                    'username' => $username
+                ];
+                header("Location: success.php");
+                exit;
             } else {
-
-            }
-        }elseif(isset($_POST['register_submit'])){
-
-
-            $username = trim($_POST["register_username"]);
-            $email = trim($_POST["register_email"]);
-            $password = ($_POST["register_password"]);
-
-            if (empty($username) || empty($email) || empty($password)) {
-                $message = "All fields are required.";
-            } else {
-
-                try {
-                    $stmt = $pdo->prepare(
-                        "INSERT INTO $users_table (Name_User, Email, Password)
-                        VALUES (:username, :email, :password)"
-                    );
-
-                    $stmt->execute([
-                        ":username" => $username,
-                        ":email" => $email,
-                        ":password" => $password
-                    ]);
-
-                    $message = "Registration successful!";
-                } catch (PDOException $e) {
-                    if ($e->getCode() == 23000) {
-                        $message = "Username or email already exists.";
-                    } else {
-                        $message = "An error occurred.";
-                    }
-                }
+                $_SESSION['login_error'] = "Invalid username or password.";
             }
         }
+    } elseif (isset($_POST['register_submit'])) { // Register normal student user
+        $username = trim($_POST["register_username"]);
+        $email = trim($_POST["register_email"]);
+        $password = ($_POST["register_password"]);
+        $db->userStudentRegister($username, $subject_code, $password);
+        // if (empty($username) || empty($email) || empty($password)) {
+        //     $message = "All fields are required.";
+        // } else {
+
+        //     try {
+        //         $stmt = $db->pdo->prepare(
+        //             "INSERT INTO $users_table (Name_User, Email, Password)
+        //                 VALUES (:username, :email, :password)"
+        //         );
+
+        //         $stmt->execute([
+        //             ":username" => $username,
+        //             ":email" => $email,
+        //             ":password" => $password
+        //         ]);
+
+        //         $message = "Registration successful!";
+        //     } catch (PDOException $e) {
+        //         if ($e->getCode() == 23000) {
+        //             $message = "Username or email already exists.";
+        //         } else {
+        //             $message = "An error occurred.";
+        //         }
+        //     }
+        // }
     }
+}
 ?>
 
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gruppe 3</title>
     <style>
         body {
-                margin: 3rem;
-                article {
-                        padding: 0rem 3rem 0rem 3rem;
+            margin: 3rem;
 
-                        form{
-                                display: flex;
-                                flex-direction: column;
-                                max-width: 33dvw;
+            article {
+                padding: 0rem 3rem 0rem 3rem;
 
-                                label{
-                                        padding-top: 1rem;
-                                }
-                        }
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    max-width: 33dvw;
+
+                    label {
+                        padding-top: 1rem;
+                    }
                 }
-                section {
-                        display: flex;
-                        flex-direction: column;
-                        padding: 2rem 0rem 2rem 0rem;
-                }
+            }
+
+            section {
+                display: flex;
+                flex-direction: column;
+                padding: 2rem 0rem 2rem 0rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <article>
@@ -139,4 +137,5 @@
         <a href="emneoversikt.php">Emneoversikt ditto</a>
     </section>
 </body>
+
 </html>
