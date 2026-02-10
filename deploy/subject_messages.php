@@ -9,7 +9,7 @@ $db = new Database();
 // NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 // Burde det være en default verdi??
 $subject_pin = "6666";
-if(!validateSubjectPin($_GET['ref'])){
+if(validateSubjectPin($_GET['ref'])){
     $subject_pin = $_GET['ref'];
 }
 
@@ -171,7 +171,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <form method="get">
                 <label for="test-melding" id="send_message">Skriv din melding her</label>
                 <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>            
-                <button type="submit" name="test-melding-submit">Send</button>
+                <button type="submit" name="test-melding-submit">Send</button>  
+                <input type="hidden" name="ref" value="<?php echo $subject_pin; ?>">              
             </form>
         </article>
     </body>

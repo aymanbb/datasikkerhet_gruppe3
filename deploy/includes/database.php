@@ -24,7 +24,7 @@ class Database
     {
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Subject_name  
+                "SELECT Subject_name, Subject_PIN 
                 from users 
                 where Is_teacher = true"
             );
@@ -44,7 +44,7 @@ class Database
     //     return null;
     // }
 
-    public function subjectPinExists(string $subject_pin): bool
+    public function subjectPinExists(int $subject_pin): bool
     {
         if (validateSubjectPin($subject_pin)) {
             try {
@@ -59,9 +59,7 @@ class Database
                     [":subm_pin" => $subject_pin]
                 );
 
-                $subject_match = $stmt->fetch();
-
-                return $subject_match['subject_pin'] != null;
+                return $stmt->fetch() != false;
             } catch (PDOException $e) {
                 $this->panic(__FILE__, __LINE__,$e);
             }

@@ -8,22 +8,19 @@ $db = new Database();
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Check get matching subjects to pin code. Should just be one.
     if (isset($_POST['request_view_subject'])) {
-        $submitted_subject_pin = trim($_POST["subject_pincode"]);
+        $submitted_subject_pin = (int)trim($_POST["subject_pincode"]);
 
         if (!$db->subjectPinExists($submitted_subject_pin)) {
-            // TODO: Some response here?
-            $message = "Boop.";
+            echo "Please, for the love of god!";
         } else {
-            if ($subject_match['subject_pin'] != null) {
-                try {
-                    $params = http_build_query([
-                        'ref' => $submitted_subject_pin
-                    ]);
-                    header("Location: subject_messages.php?ref=" . $params, true, 303);
-                    exit;
-                } catch (PDOException $e) {
-                    die("Serious error message for serious problems" . $e->getMessage());
-                }
+            try {
+                $params = http_build_query([
+                    'ref' => $submitted_subject_pin
+                ]);
+                header("Location: subject_messages.php?" . $params, true, 303);
+                exit;
+            } catch (PDOException $e) {
+                die("Serious error message for serious problems" . $e->getMessage());
             }
         }
     }

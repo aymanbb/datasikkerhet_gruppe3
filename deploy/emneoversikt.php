@@ -61,11 +61,12 @@ $subjects = $db->subjectsFetchAll($subject_code);
                     <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
                 </ul>
             </nav>
-            <?php foreach ($subjects as $subject): 
-                $name = $subject['Subject_name'];
-            ?>
+            <?php 
+                foreach ($subjects as $subject): 
+                    $name = $subject['Subject_name'];
+                ?>
                 <article>
-                    <a href="#"><h2><?= htmlspecialchars($name) ?></h2></a>
+                    <a href="<?="subject_messages.php?ref=". $subject['Subject_PIN'] ?>"><h2><?= htmlspecialchars($name) ?></h2></a>
                 </article>
             <?php endforeach; ?>
         </section>
