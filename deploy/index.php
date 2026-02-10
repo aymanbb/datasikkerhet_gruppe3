@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
@@ -34,31 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = trim($_POST["register_email"]);
         $password = ($_POST["register_password"]);
         $db->userStudentRegister($username, $subject_code, $password);
-        // if (empty($username) || empty($email) || empty($password)) {
-        //     $message = "All fields are required.";
-        // } else {
-
-        //     try {
-        //         $stmt = $db->pdo->prepare(
-        //             "INSERT INTO $users_table (Name_User, Email, Password)
-        //                 VALUES (:username, :email, :password)"
-        //         );
-
-        //         $stmt->execute([
-        //             ":username" => $username,
-        //             ":email" => $email,
-        //             ":password" => $password
-        //         ]);
-
-        //         $message = "Registration successful!";
-        //     } catch (PDOException $e) {
-        //         if ($e->getCode() == 23000) {
-        //             $message = "Username or email already exists.";
-        //         } else {
-        //             $message = "An error occurred.";
-        //         }
-        //     }
-        // }
     }
 }
 ?>

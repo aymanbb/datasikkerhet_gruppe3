@@ -1,25 +1,27 @@
 <?php
 
 require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
 
-$message = "";
 // NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 // Burde det være en default verdi??
-$subject_code = "itf1000";
+$subject_pin = "6666";
+if(!validateSubjectPin($_GET['ref'])){
+    $subject_pin = $_GET['ref'];
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
-        $user = $user_id;
+        $user_id = SessionGetUserID();
         $new_message = htmlspecialchars($_GET["test-melding"]);
         //answer
         //subject_ID
-        $db->subjectMessageSubmit($subject_code, $new_message);
+        $db->subjectMessageSubmit($user_id, (int)$subject_pin, $new_message);
     } 
-    $subject_messages = $db->subjectMessageFetchAll($subject_code);  
+    $subject_messages = $db->subjectMessageFetchAll($subject_pin);  
 }
 
 ?>
@@ -121,15 +123,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <?php foreach ($subject_messages as $subject_message): ?>
             <article>
                 <h3>Fra anonym:</h3>
-                <p><?= htmlspecialchars($subject_message['emne_id']) ?></p>
-                <p class="message"><?= htmlspecialchars($subject_message['message']) ?></p>
+                <p><?= htmlspecialchars($subject_message['Message_ID']) ?></p>
+                <p class="message"><?= htmlspecialchars($subject_message['Message_body']) ?></p>
             </article>
         <?php endforeach; ?>
         </section>
         <article>
             <h2>Delta i samtalen!</h2>
-            <?php if ($melding != ""): ?>
-                <p class="melding"><?= htmlspecialchars($melding) ?></p>
+            <?php if ($message != ""): ?>
+                <p class="melding"><?= htmlspecialchars($message) ?></p>
             <?php endif; ?>
             
             <form method="get">

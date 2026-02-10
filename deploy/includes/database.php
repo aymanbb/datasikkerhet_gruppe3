@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/config.php';
-require_once("validation");
+require_once __DIR__ . '/validation.php';
 
 class Database
 {
@@ -16,7 +16,7 @@ class Database
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
         }
     }
 
@@ -24,7 +24,7 @@ class Database
     {
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Subject_ID, Subject_name  
+                "SELECT Subject_name  
                 from users 
                 where Is_teacher = true"
             );
@@ -34,8 +34,9 @@ class Database
 
             return $subjects;
         } catch (PDOException $e) {
-            die("Serious error message for serious problems" . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
         }
+        return [];
     }
 
     // get associated data for subject?
@@ -43,17 +44,14 @@ class Database
     //     return null;
     // }
 
-
     public function subjectPinExists(string $subject_pin): bool
     {
-        if (!validateSubjectPin($subject_pin)) {
-            return false;
-        } else {
+        if (validateSubjectPin($subject_pin)) {
             try {
                 $stmt = $this->pdo->prepare(
-                    "SELECT subject_pin 
+                    "SELECT Subject_PIN 
                     FROM users 
-                    WHERE subject_pin = :subm_pin
+                    WHERE Subject_PIN = :subm_pin
                     LIMIT 1"
                 );
 
@@ -65,28 +63,31 @@ class Database
 
                 return $subject_match['subject_pin'] != null;
             } catch (PDOException $e) {
-                die($this->ERROR_MSG . $e->getMessage());
+                $this->panic(__FILE__, __LINE__,$e);
             }
         }
+        return false;
     }
 
-    public function subjectMessageSubmit(int $user_id, string $subject_code, string $message_body): bool
+    public function subjectMessageSubmit(int $user_id, int $subject_pin, string $message_body): bool
     {
-        if (!(validateSubjectCode($subject_code) || validateFreetext($message_body)))
-            try {
-                $stmt = $this->pdo->prepare(
-                    "addMessage (:message_User_ID , :message_message_body, :message_subject);"
-                );
+        if (!(validateSubjectPin($subject_pin) || validateFreetext($message_body))){
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare(
+                "CALL addMessage (:message_User_ID , :message_body, :message_subject);"
+            );
 
-                return $stmt->execute([
-                    ":message_User_ID" => $user_id,
-                    ":message_subject" => $subject_code,
-                    ":message_body" => $message_body
-                ]);
-            } catch (PDOException $e) {
-                die($this->ERROR_MSG . $e->getMessage());
-            }
-        return false;
+            return $stmt->execute([
+                ":message_User_ID" => $user_id,
+                ":message_subject" => $subject_pin,
+                ":message_body" => $message_body
+            ]);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return true;
     }
     public function subjectMessageAnswerSubmit(int $message_id, string $message_body): array
     {
@@ -96,7 +97,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "addAnswerToMessage (:messageID, :answerText);" 
+                "CALL addAnswerToMessage (:messageID, :answerText);" 
             );
 
             $success = $stmt->execute(
@@ -109,41 +110,66 @@ class Database
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         } catch (PDOException $e) {
-            die($this->ERROR_MSG . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
         }
     }
 
-    public function subjectMessageFetchAll(string $subject_code): array
+    public function subjectMessageFetchAll(string $subject_pin): array
     {
-        if (!validateSubjectCode($subject_code)) {
+        if (!validateSubjectPin($subject_pin)) {
             return [];
         }
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT emne_id, message 
-                FROM mock_database 
-                WHERE emne_id = :subject_code"
+                "SELECT Subject_PIN, message_body
+                FROM messages 
+                WHERE Subject_PIN = :subject_pin"
             );
 
             $success = $stmt->execute(
-                [":subject_code" => $subject_code]
+                [":subject_pin" => $subject_pin]
             );
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            die($this->ERROR_MSG . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
+        }
+    }
+    public function MessageCommentsFetchAll(string $message_id): array
+    {
+        if (!validateMessageID($message_id)) {
+            return [];
+        }
+
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT Comment_ID, comment_body 
+                FROM comments 
+                WHERE Message_ID = :message_id"
+            );
+
+            $success = $stmt->execute(
+                [":message_id" => $message_id]
+            );
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
         }
     }
 
-    public function userLecturerRegister($username, $email, $password, $subject, $subject_code, $pin, $image): bool
+    public function userLecturerRegister($username, $email, $password, $subject, $pin, $image): bool
     {
         // Alle disse feltene må være valid
-        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectCode($subject_code) || validateSubjectPin($pin))) {
+        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
             return false;
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "addTeacher (:teacher_name, :teacher_email, :teacher_password, :teacher_subject, :teacher_subjectPIN, :teacher_picFilename);"
+                    "CALL addTeacher (:teacher_name, :teacher_email, :teacher_password, :teacher_subject, :teacher_subjectPIN, :teacher_picFilename);"
                 );
 
                 $stmt->execute([
@@ -152,7 +178,6 @@ class Database
                     ":teacher_password" => $password,
                     ":teacher_subject" => $subject,
                     ":teacher_subjectPin" => $pin,
-                    ":teacher_subject_code" => $subject_code,
                 ]);
 
                 return true;
@@ -174,7 +199,7 @@ class Database
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "addStudent (:student_name, :student_email, :student_password);"
+                    "CALL addStudent (:student_name, :student_email, :student_password);"
                 );
 
                 $stmt->execute([
@@ -203,7 +228,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT id, password, role 
+                "SELECT User_ID, password, Email 
                 FROM users 
                 WHERE username = :username"
                 );
@@ -215,7 +240,11 @@ class Database
             return $user;
         } catch (PDOException $e) {
             // NOTE: What even causes this, when the statement is fucked or when it doesn't find anything?
-            die("Database connection failed: " . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
         }
+    }
+
+    private function panic(string $file, int $line, PDOException $error){
+        die($this->ERROR_MSG . "\n" . $error->getMessage() . "- in ". $file . ":" . $line);
     }
 }

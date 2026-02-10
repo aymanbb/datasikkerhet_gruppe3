@@ -38,6 +38,9 @@ function validateSubjectCode(string $subject_code):bool{
 function validateSubjectPin($pin):bool{
     return true;
 }
+function validateMessageID($id):bool{
+    return true;
+}
 
 function validateFreetext($text):bool{
     return true;

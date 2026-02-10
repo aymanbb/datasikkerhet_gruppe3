@@ -28,8 +28,8 @@
 - [ ] glemt passord feature
     > sende epost?
 
-- [ ] side med liste over emner
-- [ ] koble melding-side til emne dynamisk
+- [x] side med liste over emner
+    - [ ] koble melding-side til emne dynamisk
 
 - [ ] Laste opp bilde til server
     - [ ] auto-downscale/resize
@@ -39,18 +39,18 @@
 - [ ] implementere session-sjekk overalt
 
 - [ ] Database:
-    - [ ] migrer til reell database
+    - [x] migrer til reell database
     - [ ] ordne backup
-    - [ ] Migrere til stored procedures(?)
+    - [x] Migrere til stored procedures(?)
     
  - [ ] koble opp bilde-mottakelse i php-fila til "registrer foreleser", akkurat nå blir det feltet ignorert
 
 ## Mid prioritet
-- [ ] navigasjon frem og tilbake på sider
+- [x] navigasjon frem og tilbake på sider
 - [ ] skjule ip og filnavn i url-bar
 - [ ] inputvalidering
 - [ ] Rydde på server
-- [ ] refaktorere...
+- [x] refaktorere...
 - [ ] rate limiting på alle requests
 - [ ] Sikre databasetilkoblingen, 
     > flytte ut i config-fil antakelig
@@ -58,3 +58,15 @@
 - [ ] sikre brukertilganger generelt!
 
 - [ ] integrere en form for logging?
+
+
+- Kan ikke logge inn:
+> Database connection failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'field list'
+
+- kan ikke bruke gjeste-pin siden:
+
+- kan ikke emneoversikt:
+> Serious error message for serious problemsSQLSTATE[42S22]: Column not found: 1054 Unknown column 'Subject_ID' in 'field list'
+
+- subject messages:
+> Oopsie woopsie! UWU we made a fucky wucky!! SQLSTATE[42S02]: Base table or view not found: 1146 Table 'g3_database_actual.mock_database' doesn't exist
