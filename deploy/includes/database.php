@@ -1,51 +1,58 @@
 <?php
 
-
-require_once("validation");
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/validation.php';
 
 class Database
 {
-
-    // FIXME: put this in a config and refer to that instead. 
-    private $host = '127.0.0.1';
-    private $dbname = "test_database";
-    private $dbuser = "test_user";
-    private $dbpass = "strong_password";
-    public $pdo = null;
-
+    private $pdo = null;
     private $ERROR_MSG = "Oopsie woopsie! UWU we made a fucky wucky!!\n";
 
     // Establishes a connection to database and constructs PDO
     function __construct()
     {
         try {
-            $this->pdo = new PDO(
-                "mysql:host=$this->host;dbname=$this->dbname;charset=utf8mb4",
-                $this->dbuser,
-                $this->dbpass,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-                ]
-            );
+            $this->pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
         }
     }
 
+    public function subjectsFetchAll() : array
+    {
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT Subject_name  
+                from users 
+                where Is_teacher = true"
+            );
 
-    public function subjectFetchData() {}
+            $stmt->execute();
+            $subjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            return $subjects;
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return [];
+    }
+
+    // get associated data for subject?
+    // public function subjectFetchData(int $subject_pin) {
+    //     return null;
+    // }
 
     public function subjectPinExists(string $subject_pin): bool
     {
-        if (!validateSubjectPin($subject_pin)) {
-            return false;
-        } else {
+        if (validateSubjectPin($subject_pin)) {
             try {
                 $stmt = $this->pdo->prepare(
-                    "SELECT subject, subject_pin 
-                    FROM register 
-                    WHERE subject_pin = :subm_pin"
+                    "SELECT Subject_PIN 
+                    FROM users 
+                    WHERE Subject_PIN = :subm_pin
+                    LIMIT 1"
                 );
 
                 $stmt->execute(
@@ -56,72 +63,121 @@ class Database
 
                 return $subject_match['subject_pin'] != null;
             } catch (PDOException $e) {
-                die($this->ERROR_MSG . $e->getMessage());
+                $this->panic(__FILE__, __LINE__,$e);
             }
         }
-    }
-
-    public function subjectMessageSubmit(string $subject_code, string $new_message): bool
-    {
-        if (!(validateSubjectCode($subject_code) || validateFreetext($new_message)))
-            try {
-                $stmt = $this->pdo->prepare(
-                    "INSERT INTO mock_database(emne_id, message) 
-                    VALUES (:subject_code, :new_message)"
-                );
-
-                return $stmt->execute([
-                    ":subject_code" => $subject_code,
-                    ":new_message" => $new_message
-                ]);
-            } catch (PDOException $e) {
-                die($this->ERROR_MSG . $e->getMessage());
-            }
         return false;
     }
 
-    public function subjectMessageFetchAll(string $subject_code): array
+    public function subjectMessageSubmit(int $user_id, int $subject_pin, string $message_body): bool
     {
-        if (!validateSubjectCode($subject_code)) {
+        if (!(validateSubjectPin($subject_pin) || validateFreetext($message_body))){
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare(
+                "CALL addMessage (:message_User_ID , :message_body, :message_subject);"
+            );
+
+            return $stmt->execute([
+                ":message_User_ID" => $user_id,
+                ":message_subject" => $subject_pin,
+                ":message_body" => $message_body
+            ]);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return true;
+    }
+    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): array
+    {
+        if (!validateFreetext($message_body)) {
             return [];
         }
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT emne_id, message 
-                FROM mock_database 
-                WHERE emne_id = :subject_code"
+                "CALL addAnswerToMessage (:messageID, :answerText);" 
             );
 
             $success = $stmt->execute(
-                [":subject_code" => $subject_code]
+                [
+                    ":messageID" => $message_id,
+                    ":answerText" => $message_body,
+                ]
             );
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
-            die($this->ERROR_MSG . $e->getMessage());
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
         }
     }
 
-    public function userLecturerRegister($username, $email, $password, $subject, $subject_code, $pin, $image): bool
+    public function subjectMessageFetchAll(string $subject_pin): array
     {
+        if (!validateSubjectPin($subject_pin)) {
+            return [];
+        }
 
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT Subject_PIN, message_body
+                FROM messages 
+                WHERE Subject_PIN = :subject_pin"
+            );
+
+            $success = $stmt->execute(
+                [":subject_pin" => $subject_pin]
+            );
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
+        }
+    }
+    public function MessageCommentsFetchAll(string $message_id): array
+    {
+        if (!validateMessageID($message_id)) {
+            return [];
+        }
+
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT Comment_ID, comment_body 
+                FROM comments 
+                WHERE Message_ID = :message_id"
+            );
+
+            $success = $stmt->execute(
+                [":message_id" => $message_id]
+            );
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+            return [];
+        }
+    }
+
+    public function userLecturerRegister($username, $email, $password, $subject, $pin, $image): bool
+    {
         // Alle disse feltene må være valid
-        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectCode($subject_code) || validateSubjectPin($pin))) {
+        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
             return false;
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "INSERT INTO users (username, email, password, subject, subject_pin, subject_code)
-                    VALUES (:username, :email, :password, :subject, :subject_pin, :subject_code)"
+                    "CALL addTeacher (:teacher_name, :teacher_email, :teacher_password, :teacher_subject, :teacher_subjectPIN, :teacher_picFilename);"
                 );
 
                 $stmt->execute([
-                    ":username" => $username,
-                    ":email" => $email,
-                    ":password" => $password,
-                    ":subject" => $subject,
-                    ":subject_pin" => $pin,
-                    ":subject_code" => $subject_code,
+                    ":teacher_name" => $username,
+                    ":teacher_email" => $email,
+                    ":teacher_password" => $password,
+                    ":teacher_subject" => $subject,
+                    ":teacher_subjectPin" => $pin,
                 ]);
 
                 return true;
@@ -143,18 +199,16 @@ class Database
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "INSERT INTO users (username, email, password, subject, subject_pin, subject_code)
-                    VALUES (:username, :email, :password, :subject, :subject_pin, :subject_code)"
+                    "CALL addStudent (:student_name, :student_email, :student_password);"
                 );
 
                 $stmt->execute([
-                    ":username" => $username,
-                    ":email" => $email,
-                    ":password" => $password,
+                    ":student_username" => $username,
+                    ":student_email" => $email,
+                    ":student_password" => $password,
                 ]);
 
                 return true;
-                
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     $message = "Username or email already exists.";
@@ -164,5 +218,33 @@ class Database
                 return false;
             }
         }
+    }
+
+    public function userFindByUsername(string $username)
+    {
+        if (!validateUsername($username)){
+            return null;
+        }
+
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT User_ID, password, Email 
+                FROM users 
+                WHERE username = :username"
+                );
+
+            $stmt->execute([':username' => $username]);
+
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $user;
+        } catch (PDOException $e) {
+            // NOTE: What even causes this, when the statement is fucked or when it doesn't find anything?
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+    }
+
+    private function panic(string $file, int $line, PDOException $error){
+        die($this->ERROR_MSG . "\n" . $error->getMessage() . "- in ". $file . ":" . $line);
     }
 }

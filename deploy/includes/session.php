@@ -14,4 +14,11 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
     header('Location: login.php');
 }
 $_SESSION['LAST_ACTIVITY'] = time();
+
+
+
+function SessionGetUserID(){
+    return 1;
+};
+
 ?>

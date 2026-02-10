@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
