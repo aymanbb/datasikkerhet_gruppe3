@@ -157,8 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
-                    <h3>Fra anonym:</h3>
-                    <p><?= htmlspecialchars($subject_message['Message_ID']) ?></p>
+                    <h3><?= 'Message_ID: ' . htmlspecialchars($subject_message['Message_ID']) . " " ?>Fra anonym:</h3>
                     <p class="message"><?= htmlspecialchars($subject_message['Message_body']) ?></p>
                 </article>
             <?php endforeach; ?>

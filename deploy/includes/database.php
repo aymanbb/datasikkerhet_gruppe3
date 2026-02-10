@@ -123,7 +123,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Subject_PIN, message_body
+                "SELECT Message_ID, Subject_PIN, Message_body
                 FROM messages 
                 WHERE Subject_PIN = :subject_pin"
             );
