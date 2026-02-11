@@ -48,69 +48,96 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Gruppe 3</title>
     <style>
         body {
-            margin: 3rem;
+                margin: 3rem;
 
-            article {
-                padding: 0rem 3rem 0rem 3rem;
-
-                form {
+                nav ul {
+                    padding: 0;
+                    list-style: none;
+                    margin: auto;
                     display: flex;
-                    flex-direction: column;
-                    max-width: 33dvw;
+                    justify-content: center;
 
-                    label {
-                        padding-top: 1rem;
+                    li {
+                        margin: 0.5rem;
+
+                        a{
+                            text-decoration: none;
+                        }
                     }
                 }
-            }
 
-            section {
-                display: flex;
-                flex-direction: column;
-                padding: 2rem 0rem 2rem 0rem;
-            }
+                h1{
+                    display: flex;
+                    justify-content: center;
+                }
+
+                article {
+                        border: 3px solid black;
+                        padding: 2rem;
+                        width: 50dvw;
+                        margin: 1rem auto 1rem auto;
+
+                        form{
+                                display: flex;
+                                flex-direction: column;
+
+                                label{
+                                        padding-top: 1rem;
+                                }
+
+                                button{
+                                    margin-top: 1rem;
+                                }
+                        }
+                }
+                section {
+                        display: flex;
+                        flex-direction: column;
+                        padding: 2rem 0rem 2rem 0rem;
+                }
         }
     </style>
 </head>
 
 <body>
     <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
+    <nav>
+        <ul>
+            <li><a href="guest_login.php">Fortsett som gjest</a></li>
+            <li><a href="#">Glemt passord?</a></li>
+            <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
+            <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+        </ul>
+    </nav>
     <article>
-        <h2>Login</h2>
+        <h2>Logg inn</h2>
         <form action="" method="post">
-            <label for="login-username">Username:</label>
+            <label for="login-username">Navn:</label>
             <input type="text" id="login-username" name="login_username" required>
 
-            <label for="login-password">Password:</label>
+            <label for="login-password">Passord:</label>
             <input type="password" id="login-password" name="login_password" required>
 
-            <button type="submit" name="login_submit">Login</button>
+            <button type="submit" name="login_submit">Logg inn</button>
         </form>
     </article>
 
     <article>
-        <h2>Register</h2>
+        <h2>Registrer deg</h2>
         <a href="foreleser_register.php">Registrering for forelesere</a>
         <form action="" method="post">
-            <label for="register-username">Username:</label>
+            <label for="register-username">Navn:</label>
             <input type="text" id="register-username" name="register_username" required>
 
-            <label for="register-email">Email:</label>
+            <label for="register-email">E-post:</label>
             <input type="email" id="register-email" name="register_email" required>
 
-            <label for="register-password">Password:</label>
+            <label for="register-password">Passord:</label>
             <input type="password" id="register-password" name="register_password" required>
 
-            <button type="submit" name="register_submit">Register</button>
+            <button type="submit" name="register_submit">Send inn</button>
         </form>
     </article>
-
-    <section>
-        <a href="guest_login.php">Continue as Guest</a>
-        <a href="#">Forgotten password?</a>
-        <a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a>
-        <a href="emneoversikt.php">Emneoversikt ditto</a>
-    </section>
 </body>
 
 </html>

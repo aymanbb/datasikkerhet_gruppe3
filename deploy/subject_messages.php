@@ -9,7 +9,7 @@ $db = new Database();
 // NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 // Burde det være en default verdi??
 $subject_pin = "6666";
-if(!validateSubjectPin($_GET['ref'])){
+if(validateSubjectPin($_GET['ref'])){
     $subject_pin = $_GET['ref'];
 }
 
@@ -51,6 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     border: 3px solid black;
                 }
 
+                nav{
+                    margin: 0.5rem;
+
+                    a{
+                        text-decoration: none;
+                    }
+                } 
+
                 button {
                     max-width: max-content;
                 }
@@ -60,7 +68,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     flex-direction: column;
 
                     h1 {
+                        justify-content: center;
+                        display: flex;
+                    }
+
+                    nav ul {
+                        padding: 0;
+                        list-style: none;
                         margin: auto;
+                        display: flex;
+                        justify-content: center;
+
+                        li {
+                            margin: 0.5rem;
+
+                            a{
+                                text-decoration: none;
+                            }
+                        }
                     }
 
                     article {
@@ -80,10 +105,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 article {
                     display: flex;
                     flex-direction: column;
+                    border: 3px solid black;
+                    padding: 2rem;
+                    width: 50dvw;
+                    margin: 1rem auto 1rem auto;
 
                     h2{
                         width: 50dvw;
-                        margin: 3rem auto auto auto;
                     }
 
                     img{
@@ -93,8 +121,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     form {
                         display: flex;
                         flex-direction: column;
-                        border: 3px solid black;
-                        padding: 2rem;
                         width: 50dvw;
                         margin: 1rem auto 1rem auto;
 
@@ -104,6 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
                         button {
                             padding: 3px 10px 3px 10px;
+                            margin-top: 0.5rem;
                         }
                     }
                 }
@@ -111,22 +138,29 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         </style>
     </head>
     <body>
-        <a href="index.php">back to start =D</a>
-        <a href="#send_message" id="skip">Jump to contribute</a>
+        <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
-        <h1>$emnenavn</h1>
+            <h1>$emnenavn</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Gå til forsiden</a></li>
+                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
+                    <li><a href="#">Glemt passord?</a></li>
+                    <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
+                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+                </ul>
+            </nav>
             <article>
                 <h2>Foreleser</h2>
                 <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-                <img src="" alt="Photo of the lecturer">
+                <img src="" alt="Bilde av foreleser">
             </article>
-        <?php foreach ($subject_messages as $subject_message): ?>
-            <article>
-                <h3>Fra anonym:</h3>
-                <p><?= htmlspecialchars($subject_message['Message_ID']) ?></p>
-                <p class="message"><?= htmlspecialchars($subject_message['Message_body']) ?></p>
-            </article>
-        <?php endforeach; ?>
+            <?php foreach ($subject_messages as $subject_message): ?>
+                <article>
+                    <h3><?= 'Message_ID: ' . htmlspecialchars($subject_message['Message_ID']) . " " ?>Fra anonym:</h3>
+                    <p class="message"><?= htmlspecialchars($subject_message['Message_body']) ?></p>
+                </article>
+            <?php endforeach; ?>
         </section>
         <article>
             <h2>Delta i samtalen!</h2>
@@ -137,7 +171,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <form method="get">
                 <label for="test-melding" id="send_message">Skriv din melding her</label>
                 <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>            
-                <button type="submit" name="test-melding-submit">Send</button>
+                <button type="submit" name="test-melding-submit">Send</button>  
+                <input type="hidden" name="ref" value="<?php echo $subject_pin; ?>">              
             </form>
         </article>
     </body>
