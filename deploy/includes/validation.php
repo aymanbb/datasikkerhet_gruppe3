@@ -55,30 +55,47 @@ function validateFreetext($text):bool{
     return true;
 }
 
-<<<<<<< Updated upstream
-=======
 /**
- * /
  * @param array $file Associative array from $_FILES['input_name'].
- * @return bool False for upload error or file not meeting requirements.
- * True for file meets requirements.
- */
-function validateImage(array $file):bool{
-    if ($file['error'] !== UPLOAD_ERR_OK) return false;    
+ * @return string The temporary filepath, if validation passes
+ * @throws RuntimeException If the PHP upload error code is not UPLOAD_ERR_OK.
+ * @throws UnexpectedValueException If the MIME type is not permitted.
+ * @throws LengthException If the file exceeds $maxSize.
+ */ 
+ function validateImage(array $file):string{
+
+    if ($file['error'] !== UPLOAD_ERR_OK){
+
+        throw new RuntimeException("Upload failed with error code: " . $file['error']);
+    }
 
     $maxSize = 1024*1024; // = 1MB
     $allowedTypes = ['image/jpeg', 'image/png'];
 
+
     //PHPs own methods read the "magic information" off the file directly
+
     $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
     $fileType = finfo_file($fileInfo, $file['tmp_name']);
     finfo_close($fileInfo);
 
-    if (in_array($fileType, $allowedTypes) && $file['size'] <= $maxSize) {
-        return $file['tmp_name'];
+
+    if (!in_array($fileType, $allowedTypes)) {
+
+        //does not display the incorrect filetype to avoid educating attackers
+
+        throw new UnexpectedValueException("Invalid file type.");
+
     }
 
-}
+    if ($file['size'] > $maxSize) {
+
+        throw new LengthException("File exceeds maximum size.");
+
+    }
+
+    return $file['tmp_name'];
+} 
 
 /**
  * @param string $temporaryLocation Location of temporary file, for instance returned by "validateImage".
@@ -102,5 +119,4 @@ function moveUploadedFile(string $temporaryLocation, string $fileDestinationFold
             throw new RunTimeException("Failed to move $temporaryLocation to $fileDestinationFolder.");
     }
 }
->>>>>>> Stashed changes
 
