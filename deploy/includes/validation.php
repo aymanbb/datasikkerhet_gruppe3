@@ -52,8 +52,9 @@ function validateFreetext($text):bool{
 }
 
 /**
+ * Verifies that the uploaded file meets size requirements, matches allowed MIME types and is uploaded without error.
  * @param array $file Associative array from $_FILES['input_name'].
- * @return string The temporary filepath, if validation passes
+ * @return string The temporary filepath, if validation passes.
  * @throws RuntimeException If the PHP upload error code is not UPLOAD_ERR_OK.
  * @throws UnexpectedValueException If the MIME type is not permitted.
  * @throws LengthException If the file exceeds $maxSize.
@@ -68,13 +69,13 @@ function validateFreetext($text):bool{
     $maxSize = 1024*1024; // = 1MB
     $allowedTypes = ['image/jpeg', 'image/png'];
 
-    //PHPs own methods read the "magic information" off the file directly
+    //PHPs own methods read the "magic information" off the file directly.
     $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
     $fileType = finfo_file($fileInfo, $file['tmp_name']);
     finfo_close($fileInfo);
 
     if (!in_array($fileType, $allowedTypes)) {
-        //does not display the incorrect filetype to avoid educating attackers
+        //does not display the incorrect filetype to avoid educating attackers.
         throw new UnexpectedValueException("Invalid file type.");
     }
     if ($file['size'] > $maxSize) {
@@ -83,7 +84,8 @@ function validateFreetext($text):bool{
     return $file['tmp_name'];
 } 
 
- /**
+/**
+ * Generates a unique filename by making a content hash, moves the file to designated storage.
  * @param string $temporaryLocation Path to the temporary file, returned by validateImage().
  * @param string $fileDestinationFolder Target directory for storage.
  * @throws RuntimeException If the file cannot be moved to target destination.
@@ -95,6 +97,7 @@ function moveUploadedFile(string $temporaryLocation, string $fileDestinationFold
         "image/jpeg" => "jpg",
         "image/png" => "png"
     ];
+    //TODO: decide: Will this allow .exe, for instance ? should it also be disallowed here?
     $extension = $extensions[$fileType] ?? "bin";
 
      //prevets duplicates and sanitizes - hash based on the file's binary data
