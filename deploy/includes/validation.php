@@ -45,10 +45,6 @@ function validateSubjectPin($pin):bool{
 }
 function validateMessageID($id):bool{
     return true;
-    return true;
-}
-function validateMessageID($id):bool{
-    return true;
 }
 
 function validateFreetext($text):bool{
