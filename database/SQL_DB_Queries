@@ -1,76 +1,65 @@
-// User + subject table 
+CREATE DATABASE g3_database_actual;
+
+USE g3_database_actual;
+
 CREATE TABLE users (
-	User_ID int NOT NULL AUTO_INCREMENT,
-	Name_User varchar(75),
-	Email varchar(254),
-	Password varchar(50),
-	Is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
-	Picture_filename varchar(255),
-	Session_cookie varchar(32),
-	Subject_PIN int(4),
-	Subject_name varchar(255),
+	user_id int NOT NULL AUTO_INCREMENT,
+	username varchar(75),
+	email varchar(50),
+	password varchar(255),
+	is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
+	picture_filename varchar(50),
+	subject_pin int(4),
+	subject_name varchar(50),
 	PRIMARY KEY (User_ID),
-	UNIQUE (Subject_PIN)
+	UNIQUE (subject_pin)
 );
 
-
-// Comment table
-CREATE TABLE comments (
- 	Comment_ID int NOT NULL AUTO_INCREMENT,
-	Message_ID int NOT NULL,
-	Comment_body varchar(255), 
-	PRIMARY KEY (Comment_ID),
-	FOREIGN KEY (Message_ID) REFERENCES messages(Message_ID)
-);
-
-
-// Message table
 CREATE TABLE messages (
-	Message_ID int NOT NULL AUTO_INCREMENT,
-	User_ID int NOT NULL,
-	Message_body varchar (500),
-	Answer varchar(500),
-	Subject_ID int NOT NULL,
-	PRIMARY KEY (Message_ID),
-	FOREIGN KEY (Subject_ID) REFERENCES subject(Subject_ID)
+	message_id int NOT NULL AUTO_INCREMENT,
+	user_id int NOT NULL,
+	message_body varchar (255),
+	message_subject varchar(50),
+	answer varchar(255),
+	PRIMARY KEY (message_id),
+	FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-// Procedure that can be called to add a student
+CREATE TABLE comments (
+ 	comment_id int NOT NULL AUTO_INCREMENT,
+	message_id int NOT NULL,
+	comment_body varchar(255), 
+	PRIMARY KEY (comment_id),
+	FOREIGN KEY (message_id) REFERENCES messages(message_id)
+);
+
 DELIMITER //
-CREATE PROCEDURE addStudent (IN student_name VARCHAR(75), IN student_email VARCHAR(254), IN student_password VARCHAR(50))
+CREATE PROCEDURE addStudent (IN username VARCHAR(75), IN email VARCHAR(50), IN password VARCHAR(255))
 BEGIN
-	INSERT INTO users (name, email, password) VALUES (student_name, student_email, student_password);
+	INSERT INTO users (username, email, password) VALUES (username, email, password);
 END //
 DELIMITER ;
 
-
-// Procedure that can be called to add a teacher
 DELIMITER //
-CREATE PROCEDURE addTeacher (IN teacher_name VARCHAR(75), IN teacher_email VARCHAR(254), IN teacher_password VARCHAR(50), IN teacher_subject VARCHAR(255), IN teacher_subjectPIN INT(4), IN teacher_picFilename VARCHAR(255))
+CREATE PROCEDURE addTeacher (IN username VARCHAR(75), IN email VARCHAR(50), IN password VARCHAR(255), IN picture_filename VARCHAR(50), IN subject_pin INT(4), IN subject_name VARCHAR(50))
 BEGIN
 	DECLARE teacherTrue BOOLEAN;
 	SET teacherTrue = TRUE;
-	INSERT INTO users (Name, Email, Password, Subject, Subject_PIN, Picture_filename, Is_teacher) VALUES (student_name, student_email, student_password, teacher_subject, teacher_subjectPIN, teacher_picFilename, teacherTrue);
+	INSERT INTO users (username, email, password, is_teacher, picture_filename, subject_pin, subject_name) VALUES (username, email, password, teacherTrue, picture_filename, subject_pin, subject_name);
 END //
 DELIMITER ;
 
-// View to see messages and comments - to be changed to accomodate the current setup of the tables etc.
-// CREATE VIEW message_view AS SELECT Message_body, Answer, Comment_1, Comment_2, Comment_3, Comment_4, Comment_5 FROM messages;
-
-
-// Procedure to add a message, needs to be adjusted to house the current setup
 DELIMITER //
-CREATE PROCEDURE addMessage (IN message_User_ID INT, IN message_message_body VARCHAR(500), IN message_subject VARCHAR(255))
+CREATE PROCEDURE addMessage (IN user_id INT, IN message_body VARCHAR(255), IN subject_id VARCHAR(255))
 BEGIN
-	INSERT INTO users (User_ID, Message_body, Subject) VALUES (message_User_ID, message_message_body, message_subject);
+	INSERT INTO messages (user_id, message_body, subject_id) VALUES (user_id, message_body, subject_id);
 END //
 DELIMITER ;
 
-// Procedure to add answer to messages, skim over and adjust
 DELIMITER //
-CREATE PROCEDURE addAnswerToMessage (IN messageID INT, IN answerText VARCHAR(500))
+CREATE PROCEDURE addAnswerToMessage (IN message_id INT, IN answer_text VARCHAR(255))
 BEGIN
-	UPDATE messages SET Answer = answerText
-	WHERE Message_ID = messageID AND answerText IS NULL;
+	UPDATE messages SET answer = answer_text
+	WHERE message_id = message_id AND answer IS NULL;
 END //
 DELIMITER ;
