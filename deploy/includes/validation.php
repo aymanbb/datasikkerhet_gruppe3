@@ -12,35 +12,38 @@ declare(strict_types=1);
 /// DOC: Functions for validating site data.
 
 function validateUsername($username):bool{
-    return false;
+    return true;
 
 }
 
 function validateEmail($email):bool{
-    return false;
+    return true;
 
 }
 
 function validatePassword($password):bool{
-    return false;
+    return true;
 
 }
 
 function validateSubject($subject):bool{
-    return false;
+    return true;
 
 }
 
 function validateSubjectCode(string $subject_code):bool{
-    return false;
+    return true;
 }
 
 function validateSubjectPin($pin):bool{
-    return false;
+    return true;
+}
+function validateMessageID($id):bool{
+    return true;
 }
 
 function validateFreetext($text):bool{
-    return false;
+    return true;
 }
 
 /**
@@ -68,14 +71,20 @@ function validateImage(array $file):bool{
 
 /**
  * @param string $temporaryLocation Location of temporary file, for instance returned by "validateImage".
- * @param string $fileDestinationFolder Absolute filepath to permanent storage.
- * 
+ * @param string $fileDestinationFolder Absolute filepath to the folder the file should be stored in
+ * @param string $fileName 
  * moveUploadedFile($file, "/myComputer/folder/imagename.jpg")
  */
 function moveUploadedFile(string $temporaryLocation, string $fileDestinationFolder, string $fileName):void{
-    $fileType = mime_content_type($temporaryLocation);
-    $extension = explode("/", $fileType)[1] ?? "bin";
-    $fullpath = rtrim($fileDestinationFolder, "/") . "/" . $fileName . "." . $extension;   
+    $fileType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporaryLocation);
+    $extensions = [
+        "image/jpeg" => "jpg",
+        "image/png" => "png"
+    ];
+    $extension = $extensions[$fileType] ?? "bin";
+    $uniqueName = md5_file($temporaryLocation);
+
+    $fullpath = rtrim($fileDestinationFolder, "/") . "/" . $uniqueName . "." . $extension;   
 
     if (!move_uploaded_file($temporaryLocation, $fullpath)){
             throw new RunTimeException("Failed to move $temporaryLocation to $fileDestinationFolder.");
