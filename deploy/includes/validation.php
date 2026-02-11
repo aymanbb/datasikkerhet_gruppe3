@@ -13,29 +13,38 @@ declare(strict_types=1);
 
 function validateUsername($username):bool{
     return true;
+    return true;
 
 }
 
 function validateEmail($email):bool{
+    return true;
     return true;
 
 }
 
 function validatePassword($password):bool{
     return true;
+    return true;
 
 }
 
 function validateSubject($subject):bool{
+    return true;
     return true;
 
 }
 
 function validateSubjectCode(string $subject_code):bool{
     return true;
+    return true;
 }
 
 function validateSubjectPin($pin):bool{
+    return true;
+}
+function validateMessageID($id):bool{
+    return true;
     return true;
 }
 function validateMessageID($id):bool{
