@@ -135,7 +135,7 @@ class Database
             return [];
         }
     }
-    public function MessageCommentsFetchAll(string $message_id): array
+    public function messageCommentsFetchAll(string $message_id): array
     {
         if (!validateMessageID($message_id)) {
             return [];
