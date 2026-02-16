@@ -89,7 +89,7 @@ class Database
     }
     public function subjectMessageAnswerSubmit(int $message_id, string $answer_text): array
     {
-        if (!validateFreetext($message_body)) {
+        if (!validateFreetext($answer_text)) {
             return [];
         }
 
