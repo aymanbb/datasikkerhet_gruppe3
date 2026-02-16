@@ -71,7 +71,13 @@ function validateSubjectPin($pin):bool{
     }
 }
 function validateMessageID($id):bool{
-    return true;
+    $pattern = "/[0-9+]/";
+
+    if (preg_match($pattern, $id)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function validateFreetext($text):bool{
