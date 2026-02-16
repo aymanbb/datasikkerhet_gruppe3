@@ -24,12 +24,11 @@
     - [ ] lage en sjekk i foreleser_register.php som sjekker om emnenavn allerede eksisterer.
         > må håndheve at det må være unikt
 
-- [ ] koble alle php-filan opp mot den test-databasen til aaro
 - [ ] glemt passord feature
     > sende epost?
 
 - [x] side med liste over emner
-    - [ ] koble melding-side til emne dynamisk
+    - [x] koble melding-side til emne dynamisk
 
 - [ ] Laste opp bilde til server
     - [ ] auto-downscale/resize
