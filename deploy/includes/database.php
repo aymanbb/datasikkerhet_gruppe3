@@ -89,7 +89,7 @@ class Database
     }
     public function subjectMessageAnswerSubmit(int $message_id, string $answer_text): array
     {
-        if (!validateFreetext($message_body)) {
+        if (!validateFreetext($answer_text)) {
             return [];
         }
 
@@ -135,7 +135,7 @@ class Database
             return [];
         }
     }
-    public function MessageCommentsFetchAll(string $message_id): array
+    public function messageCommentsFetchAll(string $message_id): array
     {
         if (!validateMessageID($message_id)) {
             return [];
@@ -162,7 +162,7 @@ class Database
     public function userLecturerRegister($username, $email, $password, $image, $subject, $pin): bool
     {
         // Alle disse feltene må være valid
-        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
+        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubjectName($subject) || validateSubjectPin($pin))) {
             return false;
         } else {
             try {
