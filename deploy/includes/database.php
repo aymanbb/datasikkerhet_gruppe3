@@ -162,7 +162,7 @@ class Database
     public function userLecturerRegister($username, $email, $password, $image, $subject, $pin): bool
     {
         // Alle disse feltene må være valid
-        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
+        if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubjectName($subject) || validateSubjectPin($pin))) {
             return false;
         } else {
             try {
