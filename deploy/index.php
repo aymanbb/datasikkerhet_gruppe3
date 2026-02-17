@@ -3,15 +3,18 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
-require_once __DIR__ . '/includes/login.php';
+require __DIR__ . '/includes/login.php';
 
 $db = new Database();
 $login = new Login();
 $message = "";
 
+if (isset($_SESSION['logged_in'])) {
+    header('Location: emneoversikt.php');
+}
+
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    
     if (isset($_POST['login_submit'])) { // Login for users and lecturers
         $username = trim($_POST["login_username"]);
         $password = $_POST["login_password"];
@@ -21,12 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $login->login($username, $password);
         }
-    } 
-    elseif (isset($_POST['register_submit']))  { // Register normal student user
+        if (isLockedOut()) {
+            echo "You're locked out! Please try again in a few minutes.";
+        }
+    } elseif (isset($_POST['register_submit'])) { // Register normal student user
         $username = trim($_POST["register_username"]);
         $email = trim($_POST["register_email"]);
         $password = ($_POST["register_password"]);
-        $db->userStudentRegister($username, $subject_code, $password);
+        $db->userStudentRegister($username, $email, $password);
     }
 }
 ?>
@@ -132,5 +137,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </form>
     </article>
 </body>
-
 </html>
