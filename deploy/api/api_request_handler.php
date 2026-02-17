@@ -99,7 +99,7 @@ switch ($action) {
             echo json_encode(["error" => "Bad request"]);
             exit;
         }
-        $status = $db->subjectMessageSubmit($user_id, $subject_pin, $message_body);
+        $status = $db->subjectMessageSubmit((int)$user_id, (int)$subject_pin, $message_body);
         http_response_code(200);
         echo json_encode([
             "status" => $status
@@ -108,7 +108,7 @@ switch ($action) {
 
     case "subject_message_answer_submit":
         $subject_pin = ($data['subject_pin']) ?? '';
-        $status = $db->subjectMessageAnswerSubmit($message_id, $answer_text);
+        $status = $db->subjectMessageAnswerSubmit((int)$message_id, $answer_text);
         http_response_code(200);
         echo json_encode([
             "status" => $status
@@ -122,7 +122,7 @@ switch ($action) {
             echo json_encode(["error" => "Bad request"]);
             exit;
         }
-        $messages = $db->subjectMessageFetchAll($subject_pin);
+        $messages = $db->subjectMessageFetchAll((int)$subject_pin);
         http_response_code(200);
         echo json_encode([
             "data" => $messages
@@ -137,7 +137,7 @@ switch ($action) {
             echo json_encode(["error" => "Bad request"]);
             exit;
         }
-        $message_comments = $db->MessageCommentsFetchAll($message_id);
+        $message_comments = $db->MessageCommentsFetchAll((int)$message_id);
 
         http_response_code(200);
         echo json_encode([
