@@ -8,20 +8,27 @@ $db = new Database();
 
 // NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 // Burde det være en default verdi??
-$subject_pin = "6666";
-if(validateSubjectPin($_GET['ref'])){
-    $subject_pin = $_GET['ref'];
-}
+$subject_pin = 6666;
+// testing in progress, do not remove comments
+//if(validateSubjectPin($_GET['ref'])){
+//    $subject_pin = $_GET['ref'];
+//}
+
+$user_id = $_SESSION['user']['id'];
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
-        $user_id = SessionGetUserID();
-        $new_message = htmlspecialchars($_GET["test-melding"]);
+        $user_id = $_SESSION['user']['id'];
+
+        if (isset($_GET['test-melding'])) {
+            $new_message = trim((string)$_GET['test-melding']);
+        }
+
         //answer
         //subject_ID
-        $db->subjectMessageSubmit($user_id, (int)$subject_pin, $new_message);
-    } 
-    $subject_messages = $db->subjectMessageFetchAll($subject_pin);  
+        $db->subjectMessageSubmit((int)$user_id, (int)$subject_pin, $new_message);
+    }
+    $subject_messages = $db->subjectMessageFetchAll((int)$subject_pin);
 }
 
 ?>
@@ -31,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?= htmlspecialchars($emnenavn) ?>-meldinger</title>
+        <title>$Emne-meldinger c:</title>
         <style>
             body {
 
@@ -140,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
-            <h1><?= htmlspecialchars($emnenavn) ?></h1>
+            <h1>$emnenavn</h1>
             <nav>
                 <ul>
                     <li><a href="index.php">Gå til forsiden</a></li>
@@ -152,10 +159,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </nav>
             <article>
                 <h2>Foreleser</h2>
-                <p>Foreleser for <?= htmlspecialchars($emnenavn) ?> er <?= htmlspecialchars($forelesernavn) ?>. 
-                Kan nås på e-post: <a href="mailto:<?= htmlspecialchars($foreleserepost) ?>"><?= htmlspecialchars($foreleserepost) ?></a></p>
-            <!-- Filsti korrekt ? fungerer ? funnet på variabelnavn... -->
-                <img src="/media/<?= htmlspecialchars($myvar) ?>" alt="Bilde av foreleser">
+                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
+                <img src="" alt="Bilde av foreleser">
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
