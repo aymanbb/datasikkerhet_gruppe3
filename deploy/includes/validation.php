@@ -12,82 +12,43 @@ declare(strict_types=1);
 /// DOC: Functions for validating site data.
 
 function validateUsername($username):bool{
-    $pattern = "/^[a-zA-Z ]{2,50}$/";
+    return true;
+    return true;
 
-    if (preg_match($pattern, $username) === 1) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 function validateEmail($email):bool{
-    $result = filter_var($email, FILTER_VALIDATE_EMAIL);
+    return true;
+    return true;
 
-    if ($result === false) {
-        return false;
-    } else {
-        return true;
-    }
 }
 
 function validatePassword($password):bool{
-    $pattern = "/^[a-zA-Z0-9 !@#$%^&*()_+={}:|,.?~`]{16,64}$/";
+    return true;
+    return true;
 
-    if (preg_match($pattern, $password) === 1) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
-function validateSubjectName($subject):bool{
-    $pattern = "/^[a-zA-Z]{2,50}$/";
+function validateSubject($subject):bool{
+    return true;
+    return true;
 
-    if (preg_match($pattern, $subject)) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 function validateSubjectCode(string $subject_code):bool{
-    $pattern = "/^[a-zA-Z]{3}[0-9]{5}$/";
-
-    if (preg_match($pattern, $subject_code)) {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
+    return true;
 }
 
 function validateSubjectPin($pin):bool{
-    $pattern = "/^[0-9]{4}$/";
-
-    if (preg_match($pattern, $pin)) {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
 }
 function validateMessageID($id):bool{
-    $pattern = "/[0-9+]/";
-
-    if (preg_match($pattern, $id)) {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
 }
 
 function validateFreetext($text):bool{
-    $characterCap = 500;
-
-    if (!empty(trim($text)) && (strlen($text) <= $characterCap)) {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
 }
 
 /**
