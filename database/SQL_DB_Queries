@@ -63,3 +63,11 @@ BEGIN
 	WHERE message_id = message_id AND answer IS NULL;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE fetchTeacherData (IN id_subject INT, OUT username VARCHAR(255), OUT email VARCHAR(255), OUT picture_filename VARCHAR(255), OUT subject_name VARCHAR(255)) 
+BEGIN
+SELECT username, email, picture_filename, subject_name FROM  users 
+WHERE subject_pin = input_pin;
+END; //
+DELIMITER ;
