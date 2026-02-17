@@ -12,7 +12,7 @@ class Database
     function __construct()
     {
         try {
-            $this->pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+            $this->pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, zDB_PASS);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (PDOException $e) {
@@ -24,9 +24,9 @@ class Database
     {
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Subject_name, Subject_PIN 
+                "SELECT subject_name, subject_in
                 from users 
-                where Is_teacher = true"
+                where is_teacher = true"
             );
 
             $stmt->execute();
@@ -49,9 +49,9 @@ class Database
         if (validateSubjectPin($subject_pin)) {
             try {
                 $stmt = $this->pdo->prepare(
-                    "SELECT Subject_PIN 
+                    "SELECT subject_pin 
                     FROM users 
-                    WHERE Subject_PIN = :subm_pin
+                    WHERE subject_pin = :subm_pin
                     LIMIT 1"
                 );
 
@@ -74,11 +74,11 @@ class Database
         }
         try {
             $stmt = $this->pdo->prepare(
-                "CALL addMessage (:message_User_ID , :message_body, :message_subject);"
+                "CALL addMessage (:user_id , :message_body, :message_subject);"
             );
 
             return $stmt->execute([
-                ":message_User_ID" => $user_id,
+                ":user_id" => $user_id,
                 ":message_subject" => $subject_pin,
                 ":message_body" => $message_body
             ]);
@@ -87,7 +87,7 @@ class Database
         }
         return true;
     }
-    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): array
+    public function subjectMessageAnswerSubmit(int $message_id, string $answer_text): array
     {
         if (!validateFreetext($message_body)) {
             return [];
@@ -95,13 +95,13 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "CALL addAnswerToMessage (:messageID, :answerText);" 
+                "CALL addAnswerToMessage (:message_id, :answer);" 
             );
 
             $success = $stmt->execute(
                 [
-                    ":messageID" => $message_id,
-                    ":answerText" => $message_body,
+                    ":message_id" => $message_id,
+                    ":answer" => $answer_text,
                 ]
             );
 
@@ -121,9 +121,9 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Message_ID, Subject_PIN, Message_body
+                "SELECT message_id, subject_pin, message_body
                 FROM messages 
-                WHERE Subject_PIN = :subject_pin"
+                WHERE subject_pin = :subject_pin"
             );
 
             $success = $stmt->execute(
@@ -143,9 +143,9 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT Comment_ID, comment_body 
+                "SELECT comment_id, comment_body 
                 FROM comments 
-                WHERE Message_ID = :message_id"
+                WHERE message_id = :message_id"
             );
 
             $success = $stmt->execute(
@@ -159,7 +159,7 @@ class Database
         }
     }
 
-    public function userLecturerRegister($username, $email, $password, $subject, $pin, $image): bool
+    public function userLecturerRegister($username, $email, $password, $image, $subject, $pin): bool
     {
         // Alle disse feltene må være valid
         if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
@@ -167,15 +167,16 @@ class Database
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "CALL addTeacher (:teacher_name, :teacher_email, :teacher_password, :teacher_subject, :teacher_subjectPIN, :teacher_picFilename);"
+                    "CALL addTeacher (:username, :email, :password, :image, :subject, :pin);"
                 );
 
                 $stmt->execute([
-                    ":teacher_name" => $username,
-                    ":teacher_email" => $email,
-                    ":teacher_password" => $password,
-                    ":teacher_subject" => $subject,
-                    ":teacher_subjectPin" => $pin,
+                    ":username" => $username,
+                    ":email" => $email,
+                    ":password" => $password,
+                    ":image" => $image,
+                    ":subject" => $subject,
+                    ":pin" => $pin
                 ]);
 
                 return true;
@@ -197,21 +198,22 @@ class Database
         } else {
             try {
                 $stmt = $this->pdo->prepare(
-                    "CALL addStudent (:student_name, :student_email, :student_password);"
+                    "CALL addStudent (:name, :email, :password);"
                 );
 
                 $stmt->execute([
-                    ":student_username" => $username,
-                    ":student_email" => $email,
-                    ":student_password" => $password,
+                    ":name" => $username,
+                    ":email" => $email,
+                    ":password" => $password,
                 ]);
-
+                echo "success";
                 return true;
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     $message = "Username or email already exists.";
                 } else {
                     $message = "An error occurred.";
+                    echo $e;
                 }
                 return false;
             }
@@ -226,7 +228,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT User_ID, password, Email 
+                "SELECT user_id, password, email 
                 FROM users 
                 WHERE username = :username"
                 );
