@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>$Emne-meldinger c:</title>
+        <title><?= htmlspecialchars($emnenavn) ?>-meldinger</title>
         <style>
             body {
 
@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
-            <h1>$emnenavn</h1>
+            <h1><?= htmlspecialchars($emnenavn) ?></h1>
             <nav>
                 <ul>
                     <li><a href="index.php">Gå til forsiden</a></li>
@@ -152,8 +152,10 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </nav>
             <article>
                 <h2>Foreleser</h2>
-                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-                <img src="" alt="Bilde av foreleser">
+                <p>Foreleser for <?= htmlspecialchars($emnenavn) ?> er <?= htmlspecialchars($forelesernavn) ?>. 
+                Kan nås på e-post: <a href="mailto:<?= htmlspecialchars($foreleserepost) ?>"><?= htmlspecialchars($foreleserepost) ?></a></p>
+            <!-- Filsti korrekt ? fungerer ? funnet på variabelnavn... -->
+                <img src="/media/<?= htmlspecialchars($myvar) ?>" alt="Bilde av foreleser">
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
