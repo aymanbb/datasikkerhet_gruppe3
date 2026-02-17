@@ -69,6 +69,10 @@ switch ($action) {
         break;
 
     case "login":
+        $username = trim($_POST["login_username"]);
+        $password = $_POST["login_password"];
+        $login->login($username, $password);
+        
         break;
 
     case "user_student_register":
