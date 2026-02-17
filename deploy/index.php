@@ -3,12 +3,15 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/includes/login.php';
 
 $db = new Database();
+$login = new Login();
 $message = "";
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    
     if (isset($_POST['login_submit'])) { // Login for users and lecturers
         $username = trim($_POST["login_username"]);
         $password = $_POST["login_password"];
@@ -16,20 +19,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($username) || empty($password)) {
             $message = "All fields are required.";
         } else {
-            $user = $db->userFindByUsername($username);
-            if ($user && password_verify($password, $user['password'])) {
-                session_regenerate_id(true);
-                $_SESSION['user'] = [
-                    'id' => $user['id'],
-                    'username' => $username
-                ];
-                header("Location: success.php");
-                exit;
-            } else {
-                $_SESSION['login_error'] = "Invalid username or password.";
-            }
+            $login->login($username, $password);
         }
-    } elseif (isset($_POST['register_submit'])) { // Register normal student user
+    } 
+    elseif (isset($_POST['register_submit']))  { // Register normal student user
         $username = trim($_POST["register_username"]);
         $email = trim($_POST["register_email"]);
         $password = ($_POST["register_password"]);

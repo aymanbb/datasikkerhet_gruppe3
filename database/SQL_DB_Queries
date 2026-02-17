@@ -3,34 +3,35 @@ CREATE DATABASE g3_database_actual;
 USE g3_database_actual;
 
 CREATE TABLE users (
-	user_id int NOT NULL AUTO_INCREMENT,
-	username varchar(75),
-	email varchar(50),
-	password varchar(64),
-	is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
-	picture_filename varchar(50),
-	subject_pin int(4),
-	subject_name varchar(50),
-	PRIMARY KEY (User_ID),
-	UNIQUE (subject_pin)
+        user_id int NOT NULL AUTO_INCREMENT,
+        username varchar(75),
+        email varchar(50),
+        password varchar(255),
+        is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
+        picture_filename varchar(50),
+        subject_pin int(4),
+        subject_name varchar(50),
+        PRIMARY KEY (user_id),
+        UNIQUE (subject_pin)
 );
 
 CREATE TABLE messages (
-	message_id int NOT NULL AUTO_INCREMENT,
-	user_id int NOT NULL,
-	message_body varchar (255),
-	message_subject varchar(50),
-	answer varchar(255),
-	PRIMARY KEY (message_id),
-	FOREIGN KEY (user_id) REFERENCES users(user_id)
+        message_id int NOT NULL AUTO_INCREMENT,
+        user_id int NOT NULL,
+        message_body varchar(255),
+        answer varchar(255),
+        subject_pin int(4),
+        PRIMARY KEY (message_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (subject_pin) REFERENCES users(subject_pin)
 );
 
 CREATE TABLE comments (
- 	comment_id int NOT NULL AUTO_INCREMENT,
-	message_id int NOT NULL,
-	comment_body varchar(255), 
-	PRIMARY KEY (comment_id),
-	FOREIGN KEY (message_id) REFERENCES messages(message_id)
+        comment_id int NOT NULL AUTO_INCREMENT,
+        message_id int NOT NULL,
+        comment_body varchar(255),
+        PRIMARY KEY (comment_id),
+        FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );
 
 DELIMITER //
