@@ -69,3 +69,37 @@
 
 - subject messages:
 > Oopsie woopsie! UWU we made a fucky wucky!! SQLSTATE[42S02]: Base table or view not found: 1146 Table 'g3_database_actual.mock_database' doesn't exist
+
+## Testing
+
+Forside:
++ Lage bruker, og se at passordet hashes
++ Login, se at riktig bruker hentes og at session opprettes
+- Se at blir redirected til ønsket side. 
+    X Foreleser -> sitt emne sin subject_messages, 
+    + Student -> emneoversikt
++ Se at duplikatinnlogging håndteres riktig
+
+Foreleser registrering:
++ Lage bruker, se at passord hashes
+X Sjekke at PIN er unik 
+
+Gjest innlogging:
+- Se at redirectes til riktig fag
+
+Password recovery:
+- At noe skjer her, opprette nytt passord og overskrive i databasen? Basert på brukernavn/e-post
+
+Emneoversikt:
+- Alle tilgjengelige emner skal vises her, dynamisk
++ studenter skal kunne gå til emnesiden
+
+Meldingssiden:
++ Se at riktig emne kommer opp med tilhørende riktig informasjon
++ Se at foreleseren sitt bilde vises
+- Se at kun student kan sende melding
+- Kun foreleser kan lage svar
+- Gjest skal kun kunne kommentere
+- Se at svar/kommentar vises
+
+kjent mann: deae00e95446
