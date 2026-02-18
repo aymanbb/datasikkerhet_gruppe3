@@ -46,7 +46,7 @@
                         $tempname = $_FILES['register_image']['tmp_name'];
 
                         // Move the uploaded file
-                        move_uploaded_file($tempname, "/var/www/html/media/" . $GLOBALS['image']);
+                        move_uploaded_file($tempname, "/var/www/html/steg1/media/" . $GLOBALS['image']);
                     } else {
                         echo "Error: File extension not allowed. " . $extension;
                     }

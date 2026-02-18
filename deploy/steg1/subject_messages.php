@@ -8,7 +8,7 @@ $subject_id = $_GET['ref'];
 
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
-if (!isset($_SESSION['logged_in'])) {
+if (!isset($_SESSION['logged_in']) && ($S_SESSION['guest'] != true && $_SESSION['permitted_subject'] != $subject_id)) {
     header('Location: index.php');
 }
 
@@ -19,7 +19,7 @@ $db = new Database();
 $emne_info = $db->getSubjectInfo($subject_id);
 $emnenavn = $emne_info['subject_name'];
 $foreleser = $db->userFindById($emne_info['teacher_id']);
-$foreleser_img = "/media/" . $foreleser['picture_filename'];
+$foreleser_img = "/steg1//media/" . $foreleser['picture_filename'];
 
 $user_id = $_SESSION['user']['id'];
 
@@ -161,6 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     <li><a href="guest_login.php">Fortsett som gjest</a></li>
                     <li><a href="forgot-password.php">Glemt passord?</a></li>
                     <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+                    
                 </ul>
             </nav>
             <article>
@@ -172,7 +173,16 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 <article>
                     <h3><?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id']) . " " ?>Fra anonym:</h3>
                     <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
-                </article>
+                        <?php if($subject_message['answer']): ?>
+                                <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
+                        <?php else: ?>
+                                <form action="" method="POST">
+                                        <input type="hidden" name="message_id" value="<?= $subject_message['message_id'] ?>">
+                                        <textarea name="answer" maxlength="256" rows="10" cols="50"></textarea>
+                                        <button type="submit" name="answer_submit">Svar</button>
+                                </form>
+                        <?php endif; ?> 
+                </article
             <?php endforeach; ?>
         </section>
         <article>
