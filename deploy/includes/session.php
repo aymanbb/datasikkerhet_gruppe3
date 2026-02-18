@@ -47,5 +47,9 @@ function isLockedOut() {
 resetAttempts();
 
 // Store the current time as last activity
+<<<<<<< Updated upstream:deploy/includes/session.php
 $_SESSION['LAST_ACTIVITY'] = time();
 ?>
+=======
+$_SESSION['LAST_ACTIVITY'] = time(); ?>
+>>>>>>> Stashed changes:deploy/steg1/includes/session.php

@@ -24,9 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $login->login($username, $password);
         }
-        if (isLockedOut()) {
-            echo "You're locked out! Please try again in a few minutes.";
-        }
+        //if (isLockedOut()) {
+        //    echo "You're locked out! Please try again in a few minutes.";
+        //}
     } elseif (isset($_POST['register_submit'])) { // Register normal student user
         $username = trim($_POST["register_username"]);
         $email = trim($_POST["register_email"]);
