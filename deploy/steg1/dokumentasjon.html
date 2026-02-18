@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gruppe 3</title>
+    <style>
+        body {
+                margin: 3rem;
+
+                h1{
+                    display: flex;
+                    justify-content: center;
+                }
+
+                section {
+                        display: flex;
+                        flex-direction: column;
+                        padding: 2rem 0rem 2rem 0rem;
+                }
+
+                article {
+                        border: 3px solid black;
+                        padding: 2rem;
+                        width: 50dvw;
+                        margin: 1rem auto 1rem auto;
+                }
+        }
+    </style>
+</head>
+<body>
+    <h1>Gruppe 3 dokumentasjonsside</h1>
+    <article>
+        <h2>Kontakt gruppe 3!</h2>
+        <ul>
+            <li>Ayman Bellamine: <a href="mailto:ayman.bellamine@hiof.no">ayman.bellamine@hiof.no</a></li>
+            <li>Aaro Ilmari Sivula: <a href="mailto:aaro.i.sivula@hiof.no">aaro.i.sivula@hiof.no</a></li>
+            <li>Katrine Hoel: <a href="mailto:katrine.hoel@hiof.no">katrine.hoel@hiof.no</a></li>
+            <li>Torgeir Gran Fjereide: <a href="mailto:torgeir.g.fjereide@hiof.no">torgeir.g.fjereide@hiof.no</a></li>
+            <li>Silje Størkersen: <a href="mailto:silje.m.storkersen@hiof.no">silje.m.storkersen@hiof.no</a></li>
+        </ul>
+    </article>
+    <section>
+        <article>
+            <h2>Frontend</h2>
+            <p>
+                Som angitt i oppgaven er styling ikke prioritert. 
+                HTML er delvis generert med hjelp av KI-tjenesten Google Gemini, 
+                det er skrevet minimal CSS - for hånd.
+            </p>
+        </article>
+        <article>
+            <h2>API</h2>
+            <p>
+                Trykk <a href="158.39.188.219/steg1/api">her</a> 
+                for å komme til api-spesifikk dokumentasjon. 
+            </p>
+            <p>
+                Det er opprettet et API for interaksjon mellom frontend og databasen. 
+                API'et er et POST-basert API som gjør det mulig å utføre enkle operasjoner mot løsningen. 
+                Det er tilrettelagt både mot webtjenester og tredjepartsløsninger som applikasjoner.
+            </p>
+        </article>
+        <article>
+            <h2>Login og informasjonskaplser</h2>
+            <p>
+                Ved opprettelse av bruker blir passord hashet til databasen, resten lagres i klartekst. 
+            </p>
+            <p>
+                Det er benyttet session-håndtering ved innlogging som lagrer hvorvidt du er foreleser, 
+                gjest, eller student. En session opprettes kun dersom en registrert bruker logger inn. 
+                Tilgangene til de ulike sidene og rettighetene knyttet til handlinger kontrolleres og 
+                styres gjennom de sessions som opprettes. En session har per i dag en levetid på 30 minutter. 
+                Glemmer brukeren passordet, vil "glemt passord" gi brukeren et nytt passord. 
+                Det nye passordet brukeren får tilsendt blir automatisk hashet og lagret i databasen. 
+            </p>
+        </article>
+        <article>
+            <h2>Datalagring</h2>
+            <p>
+                Lagring foregår på lokal server, som en hybrid løsning mellom fillagring 
+                og lagring i en relasjonsdatabase. 
+                Stored procedures tilgjengeliggjør informasjonsinnsett og -uttak.
+            </p>
+        </article>
+    </section>
+</body>
