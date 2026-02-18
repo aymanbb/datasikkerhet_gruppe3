@@ -52,12 +52,19 @@
                     }
                     //Bildehåndtering slutt
 
-                    if($db->userLecturerRegister($username, $email, $password, $image, $pin, $subject)){
-                    //FIXME: some error message here
-                        echo "success";
+                    $check_name = $db->userFindByUsername($username);
+                    $check_subject = $db->findSubjectByName($subject);
+
+                    if ($check_name == null && $check_subject == null) {
+                        if($db->userLecturerRegister($username, $email, $password, $image, $pin, $subject)){
+                        //FIXME: some error message here
+                            echo "success";
+                        } else {
+                        // FIXME: Some error message here
+                            echo "fail";
+                        }
                     } else {
-                    // FIXME: Some error message here
-                        echo "fail";
+                        echo "Username or subject already exists!";
                     }
 
                     $message = "Registration successfull!";

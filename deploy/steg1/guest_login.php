@@ -10,13 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST['request_view_subject'])) {
         $submitted_subject_pin = (int)trim($_POST["subject_pincode"]);
 
-        if (!$db->subjectPinExists($submitted_subject_pin)) {
+        $subject = $db->subjectPinExists($submitted_subject_pin);
+
+        if (!$subject) {
             echo "Please, for the love of god!";
         } else {
             try {
                 $params = http_build_query([
-                    'ref' => $submitted_subject_pin
+                    'ref' => $subject['subject_id']
                 ]);
+                $_SESSION['guest'] = true;
+                $_SESSION['permitted_subject'] = $subject['subject_id'];
                 header("Location: subject_messages.php?" . $params, true, 303);
                 exit;
             } catch (PDOException $e) {
