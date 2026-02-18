@@ -12,6 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Get headers
+$headers = getallheaders();
+
+// Extract session ID from Authorization header
+if (!empty($headers['Authorization'])) {
+    if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
+        session_id($matches[1]);  // MUST happen before session_start()
+    }
+}
+session_start();
+
 // Get raw JSON input
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -22,19 +33,24 @@ if (!$data) {
 }
 
 $db = new Database();
+$login = new Login();
 
 if ($data['action'] == 'login') {
-     $username = trim($_POST["login_username"]);
+    $username = trim($_POST["login_username"]);
     $password = $_POST["login_password"];
-    $login->login($username, $password);
-    http_response_code(200);
+    $success = $login->login($username, $password);
+    if ($success){
+
+        http_response_code(200);
+    }else{
+        
+        http_response_code(400);
+    }
     exit;    
 }
-// if ($data[])
 
 // Example: simple action switch
 $action = $data['action'] ?? '';
-
 switch ($action) {
     case "ping":
         echo json_encode([
