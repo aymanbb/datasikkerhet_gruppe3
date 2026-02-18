@@ -111,6 +111,11 @@ class Database
                 "CALL addAnswerToMessage (:message_id, :answer);"
                 );
 
+                $stmt = $this->pdo->prepare(
+                    "UPDATE messages SET answer = :answer
+                    WHERE :message_id = message_id AND answer IS NULL;"
+                );
+
                 return $stmt->execute(
                     [
                         ":message_id" => $message_id,
@@ -131,7 +136,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_id, message_body, message_id FROM messages WHERE subject_id = :subject_id"
+                "SELECT subject_id, message_body, message_id, answer FROM messages WHERE subject_id = :subject_id"
             );
 
             $stmt->execute([":subject_id" => $subject_id]);
