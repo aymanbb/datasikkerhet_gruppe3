@@ -4,19 +4,24 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
+$subject_id = $_GET['ref'];
+
+// sjekker om bruker er logget inn, eller er gjest med tilgang til emne
+//if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
+if (!isset($_SESSION['logged_in'])) {
+    header('Location: index.php');
+}
+
 $db = new Database();
 
-// NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
-// Burde det være en default verdi??
-$subject_pin = 6666;
-$subject_id = 1;
-// testing in progress, do not remove comments
-//if(validateSubjectPin($_GET['ref'])){
-//    $subject_pin = $_GET['ref'];
-//}
+// validering paa vei?
+
+$emne_info = $db->getSubjectInfo($subject_id);
+$emnenavn = $emne_info['subject_name'];
+$foreleser = $db->userFindById($emne_info['teacher_id']);
+$foreleser_img = "/media/" . $foreleser['picture_filename'];
 
 $user_id = $_SESSION['user']['id'];
-echo $user_id;
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
@@ -40,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>$Emne-meldinger c:</title>
+        <title><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> meldinger</title>
         <style>
             body {
 
@@ -154,15 +159,14 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 <ul>
                     <li><a href="index.php">Gå til forsiden</a></li>
                     <li><a href="guest_login.php">Fortsett som gjest</a></li>
-                    <li><a href="#">Glemt passord?</a></li>
-                    <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
+                    <li><a href="forgot-password.php">Glemt passord?</a></li>
                     <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
                 </ul>
             </nav>
             <article>
                 <h2>Foreleser</h2>
-                <p>Foreleser for $emnenavn er $forelesernavn. Kan nås på e-post: $foreleserepost</p>
-                <img src="" alt="Bilde av foreleser">
+                <p>Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> er <?= htmlspecialchars($foreleser['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>. Kan nås på e-post: <?= htmlspecialchars($foreleser['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                <img src="<?php echo htmlspecialchars($foreleser_img); ?>" alt="Bilde av foreleser">
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
@@ -176,12 +180,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <?php if ($message != ""): ?>
                 <p class="melding"><?= htmlspecialchars($message) ?></p>
             <?php endif; ?>
-            
+
             <form method="get">
                 <label for="test-melding" id="send_message">Skriv din melding her</label>
-                <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>            
-                <button type="submit" name="test-melding-submit">Send</button>  
-                <input type="hidden" name="ref" value="<?php echo $subject_pin; ?>">              
+                <textarea name="test-melding" maxlength="256" rows="10" cols="50" required></textarea>
+                <button type="submit" name="test-melding-submit">Send</button>
+                <input type="hidden" name="ref" value="<?php echo $subject_id; ?>">
             </form>
         </article>
     </body>

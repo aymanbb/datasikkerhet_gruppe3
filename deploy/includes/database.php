@@ -37,12 +37,12 @@ class Database
         return [];
     }
 
-    public function subjectPinExists(int $subject_pin): bool
+    public function subjectPinExists(int $subject_pin)
     {
         if (validateSubjectPin($subject_pin)) {
             try {
                 $stmt = $this->pdo->prepare(
-                    "SELECT subject_pin FROM users WHERE subject_pin = :subm_pin LIMIT 1"
+                    "SELECT subject_id, subject_pin FROM subjects WHERE subject_pin = :subm_pin LIMIT 1"
                 );
 
                 $stmt->execute(
@@ -51,7 +51,9 @@ class Database
 
                 $subject_match = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                return !empty($subject_match['subject_pin']);
+                if (!$subject_match) return null;
+
+                return $subject_match;
             } catch (PDOException $e) {
                 $this->panic(__FILE__, __LINE__,$e);
             }
@@ -124,6 +126,7 @@ class Database
             return [];
         }
     }
+
     public function MessageCommentsFetchAll(int $message_id): array
     {
         if (!validateMessageID($message_id)) {
@@ -251,6 +254,25 @@ class Database
         return null;
     }
 
+    public function userFindById(int $user_id)
+    {
+       try {
+            $stmt = $this->pdo->prepare(
+                "SELECT username, email, picture_filename FROM users WHERE user_id = :user_id LIMIT 1"
+            );
+
+            $stmt->execute([':user_id' => $user_id]);
+
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) return null;
+
+            return $user;
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+    }
+
     public function resetPassword(string $username, string $new_password): bool
     {
         if (!validateUsername($username)) {
@@ -291,6 +313,27 @@ class Database
             if (!$row) return null;
 
             return (int)$row['user_id'];
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return null;
+    }
+
+    public function getSubjectInfo(int $subject_id)
+    {
+
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT subject_name, teacher_id FROM subjects WHERE subject_id = :subject_id LIMIT 1"
+            );
+
+            $stmt->execute([':subject_id' => $subject_id]);
+
+            $row =  $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) return null;
+
+            return $row;
         } catch (PDOException $e) {
             $this->panic(__FILE__, __LINE__,$e);
         }

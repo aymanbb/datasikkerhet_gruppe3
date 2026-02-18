@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
-$subjects = $db->subjectsFetchAll($subject_code);
+$subjects = $db->subjectsFetchAll();
 
 ?>
 
@@ -19,7 +19,7 @@ $subjects = $db->subjectsFetchAll($subject_code);
             section {
                     display: flex;
                     flex-direction: column;
-                    
+
                     h1 {
                         margin: auto;
                     }
@@ -61,12 +61,12 @@ $subjects = $db->subjectsFetchAll($subject_code);
                     <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
                 </ul>
             </nav>
-            <?php 
-                foreach ($subjects as $subject): 
-                    $name = $subject['Subject_name'];
+            <?php
+                foreach ($subjects as $subject):
+                    $name = $subject['subject_name'];
                 ?>
                 <article>
-                    <a href="<?="subject_messages.php?ref=". $subject['Subject_PIN'] ?>"><h2><?= htmlspecialchars($name) ?></h2></a>
+                    <a href="<?="subject_messages.php?ref=". $subject['subject_id'] ?>"><h2><?= htmlspecialchars($name) ?></h2></a>
                 </article>
             <?php endforeach; ?>
         </section>
