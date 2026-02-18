@@ -8,10 +8,15 @@ $db = new Database();
 
 // NOTE: det skal være mulig å hente "subject pin" fra $_GET['ref'] her, om man blir omdirigert fra guest_login.php 
 // Burde det være en default verdi??
-$subject_pin = "6666";
-if(validateSubjectPin($_GET['ref'])){
-    $subject_pin = $_GET['ref'];
-}
+$subject_pin = 6666;
+$subject_id = 1;
+// testing in progress, do not remove comments
+//if(validateSubjectPin($_GET['ref'])){
+//    $subject_pin = $_GET['ref'];
+//}
+
+$user_id = $_SESSION['user']['id'];
+echo $user_id;
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if(isset($_GET['test-melding-submit'])){
@@ -19,9 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $new_message = htmlspecialchars($_GET["test-melding"]);
         //answer
         //subject_ID
-        $db->subjectMessageSubmit($user_id, (int)$subject_pin, $new_message);
-    } 
-    $subject_messages = $db->subjectMessageFetchAll($subject_pin);  
+        $db->subjectMessageSubmit((int)$user_id, (int)$subject_id, $new_message);
+    }
+    $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
 }
 
 ?>
@@ -140,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
         <section>
-            <h1>$emnenavn</h1>
+            <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
             <nav>
                 <ul>
                     <li><a href="index.php">Gå til forsiden</a></li>
@@ -157,8 +162,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
-                    <h3><?= 'Message_ID: ' . htmlspecialchars($subject_message['Message_ID']) . " " ?>Fra anonym:</h3>
-                    <p class="message"><?= htmlspecialchars($subject_message['Message_body']) ?></p>
+                    <h3><?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id']) . " " ?>Fra anonym:</h3>
+                    <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
                 </article>
             <?php endforeach; ?>
         </section>
