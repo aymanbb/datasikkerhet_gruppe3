@@ -4,6 +4,9 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
+
+
+
 $db = new Database();
 
 if (!isset($_SESSION['logged_in'])) {
@@ -11,9 +14,17 @@ if (!isset($_SESSION['logged_in'])) {
     exit;
 }
 
-$user = $db->userFindById($_SESSION['user']['id']);
+$user_id = getSessionUserId();
+$user = $db->userFindById($user_id);
+$is_guest = isset($_SESSION['guest']);
 
-if ($user['is_teacher'] == 1) {
+// FLAGS
+$is_teacher = false;
+if ($user != null) {
+    $is_teacher = (bool)$user['is_teacher'];
+}
+
+if ($is_teacher) {
     $subject = $db->findSubjectByLecturerId($user['user_id']);
     try {
         $params = http_build_query([

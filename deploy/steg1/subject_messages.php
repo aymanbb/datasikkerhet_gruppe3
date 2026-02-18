@@ -28,7 +28,7 @@ $is_guest = isset($_SESSION['guest']);
 // FLAGS
 $is_teacher = false;
 if ($user != null) {
-    $is_teacher = $user['is_teacher'];
+    $is_teacher = (bool)$user['is_teacher'];
 }
 $user_can_comment = $is_guest == true || $is_teacher == false;
 $user_can_answer =  $is_teacher;
