@@ -102,30 +102,25 @@ class Database
         return false;
     }
 
-    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): array
+    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): bool
     {
-        if (!validateFreetext($message_body)) {
-            return [];
-        }
+        if (!validateFreetext($message_body)) return false;
 
-        try {
-            $stmt = $this->pdo->prepare(
+            try{
+                $stmt = $this->pdo->prepare(
                 "CALL addAnswerToMessage (:message_id, :answer);"
-            );
+                );
 
-            $stmt->execute(
-                [
-                    ":message_id" => $message_id,
-                    ":answer" => $message_body,
-                ]
-            );
-
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            $this->panic(__FILE__, __LINE__,$e);
-            return [];
-        }
+                return $stmt->execute(
+                    [
+                        ":message_id" => $message_id,
+                        ":answer" => $message_body,
+                    ]
+                );
+            } catch (PDOException $e) {
+                $this->panic(__FILE__, __LINE__, $e);
+                return false;
+            }
     }
 
     public function subjectMessageFetchAll(int $subject_id): array

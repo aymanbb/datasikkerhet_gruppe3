@@ -20,12 +20,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['answer-submit'])) {
     $message_id = (int)$_POST['message_id'];
     $answer_text = trim((string)$_POST['answer']);
 
-    $db->subjectMessageAnswerSubmit($message_id, $answer_text);
+    if ($db->subjectMessageAnswerSubmit($message_id, $answer_text)) {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
+        exit;
+    } else {
+        die("Error: Update failed.");
+    }
+
+    /*$db->subjectMessageAnswerSubmit($message_id, $answer_text);
     header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
-    exit;
+    exit;*/
 }
 
-$emne_info = $db->getSubjectInfo($subject_id);
+$emne_info = $db->getSubjectInfo((int) $subject_id);
 $emnenavn = $emne_info['subject_name'];
 $foreleser = $db->userFindById($emne_info['teacher_id']);
 $foreleser_img = "/media/" . $foreleser['picture_filename'];
@@ -184,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                     <?php if ($subject_message['answer']): ?>
                         <p class="answer"><?= htmlspecialchars($subject_message['answer']) ?></p>
                     <?php else: ?>
-                        <form action="submit_answer.php" method="POST">
+                        <form action="" method="POST">
                             <input type="hidden" name="message_id" value="<?= $subject_message['message_id'] ?>">
                             <textarea name="answer" maxlength="256" rows="10" cols="50" required></textarea>
                             <button type="submit" name="answer-submit">Svar</button>

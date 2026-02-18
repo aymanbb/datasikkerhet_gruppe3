@@ -77,10 +77,10 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE addAnswerToMessage (IN message_id INT, IN answer_text VARCHAR(255))
+CREATE PROCEDURE addAnswerToMessage (IN this_message_id INT, IN answer_text VARCHAR(255))
 BEGIN
         UPDATE messages SET answer = answer_text
-        WHERE message_id = message_id AND answer IS NULL;
+        WHERE this_message_id = message_id AND answer IS NULL;
 END //
 DELIMITER ;
 
