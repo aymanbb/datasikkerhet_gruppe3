@@ -24,7 +24,7 @@ class Database
     {
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_name FROM users WHERE is_teacher = true"
+                "SELECT subject_id, subject_name FROM subjects;"
             );
 
             $stmt->execute();
@@ -59,20 +59,20 @@ class Database
         return false;
     }
 
-    public function subjectMessageSubmit(int $user_id, int $subject_pin, string $message_body): bool
+    public function subjectMessageSubmit(int $user_id, int $subject_id, string $message_body): bool
     {
-        if (!(validateSubjectPin($subject_pin) || validateFreetext($message_body))){
+        if (!validateFreetext($message_body)){
             return false;
         }
         try {
             $stmt = $this->pdo->prepare(
-                "CALL addMessage (:message_user_id, :message_body, :subject_pin);"
+                "CALL addMessage (:message_user_id, :message_body, :subject_id);"
             );
 
             return $stmt->execute([
                 ":message_user_id" => $user_id,
                 ":message_body" => $message_body,
-                ":subject_pin" => $subject_pin
+                ":subject_id" => $subject_id
             ]);
         } catch (PDOException $e) {
             $this->panic(__FILE__, __LINE__,$e);
@@ -106,18 +106,18 @@ class Database
         }
     }
 
-    public function subjectMessageFetchAll(int $subject_pin): array
+    public function subjectMessageFetchAll(int $subject_id): array
     {
-        if (!validateSubjectPin($subject_pin)) {
-            return [];
-        }
+        //if (!validateSubjectPin($subject_pin)) {
+        //    return [];
+        //}
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_pin, message_body FROM messages WHERE subject_pin = :subject_pin"
+                "SELECT subject_id, message_body, message_id FROM messages WHERE subject_id = :subject_id"
             );
 
-            $stmt->execute([":subject_pin" => $subject_pin]);
+            $stmt->execute([":subject_id" => $subject_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             $this->panic(__FILE__, __LINE__,$e);
