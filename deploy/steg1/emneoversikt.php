@@ -5,8 +5,35 @@ require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
-$subjects = $db->subjectsFetchAll();
 
+if (!isset($_SESSION['logged_in'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$user = $db->userFindById($_SESSION['user']['id']);
+
+if ($user['is_teacher'] == 1) {
+    $subject = $db->findSubjectByLecturerId($user['user_id']);
+    try {
+        $params = http_build_query([
+            'ref' => $subject['subject_id']
+        ]);
+        header("Location: subject_messages.php?" . $params, true, 303);
+        exit;
+    } catch (PDOException $e) {
+        die("Serious error message for serious problems" . $e->getMessage());
+    }
+}
+
+$subjects = $db->subjectsFetchAll();
+//$username = "tomh";
+//$user = $db->userFindByUsername($username);
+//$subject = $db->findSubjectByLecturerId($_SESSION['user']['id']);
+
+//echo $user['is_teacher'];
+//echo $user['username'];
+//echo $subject['subject_id'];
 ?>
 
 <!DOCTYPE html>

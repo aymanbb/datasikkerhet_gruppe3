@@ -48,4 +48,5 @@ function isLockedOut() {
 resetAttempts();
 
 // Store the current time as last activity
-$_SESSION['LAST_ACTIVITY'] = time(); ?>
+$_SESSION['LAST_ACTIVITY'] = time();
+?>

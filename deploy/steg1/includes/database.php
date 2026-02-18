@@ -24,11 +24,31 @@ class Database
     {
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_id, subject_name FROM subjects WHERE subject_name = :subject_name"
+                "SELECT subject_id, subject_name, teacher_id FROM subjects WHERE subject_name = :subject_name"
             );
 
             $stmt->execute(
                 [":subject_name" => $subject_name]
+            );
+            $subject = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$subject) return null;
+
+            return $subject;
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+    }
+
+    public function findSubjectByLecturerId(int $lecturer_id)
+    {
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT subject_id, subject_name FROM subjects WHERE teacher_id = :teacher_id"
+            );
+
+            $stmt->execute(
+                [":teacher_id" => $lecturer_id]
             );
             $subject = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -226,7 +246,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT user_id AS id, username, password FROM users WHERE username = :username LIMIT 1"
+                "SELECT user_id, is_teacher, email, picture_filename, username, password FROM users WHERE username = :username LIMIT 1"
             );
 
             $stmt->execute([':username' => $username]);
@@ -235,7 +255,7 @@ class Database
 
             if (!$user) return null;
 
-            $user['id'] = isset($user['id']) ? (int)$user['id'] : null;
+            //$user['id'] = isset($user['id']) ? (int)$user['id'] : null;
 
             return $user;
         } catch (PDOException $e) {
@@ -256,7 +276,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT user_id AS id, username FROM users WHERE email = :email LIMIT 1"
+                "SELECT user_id, is_teacher, email, picture_filename, username FROM users WHERE email = :email LIMIT 1"
             );
 
             $stmt->execute([':email' => $email]);
@@ -265,7 +285,7 @@ class Database
 
             if (!$user) return null;
 
-            $user['id'] = isset($user['id']) ? (int)$user['id'] : null;
+            //$user['id'] = isset($user['id']) ? (int)$user['id'] : null;
 
             return $user;
         } catch (PDOException $e) {
@@ -278,7 +298,7 @@ class Database
     {
        try {
             $stmt = $this->pdo->prepare(
-                "SELECT username, email, picture_filename FROM users WHERE user_id = :user_id LIMIT 1"
+                "SELECT user_id, is_teacher, email, picture_filename, username FROM users WHERE user_id = :user_id LIMIT 1"
             );
 
             $stmt->execute([':user_id' => $user_id]);
