@@ -18,8 +18,20 @@
                 <p></p>
             </li>
             <li>
-                <h2>Sessions</h2>
-                <p></p>
+                <h2>Sessions og login</h2>
+                <p>
+                    Ved opprettelse av bruker blir passord hashet til databasen, resten lagres i klartekst. 
+                </p>
+                <p>
+                    Det er benyttet session-håndtering ved innlogging som lagrer hvorvidt du er foreleser, gjest,
+                    eller student. En session opprettes kun dersom en registrert bruker logger inn. 
+                    
+                    Tilgangene til de ulike sidene og rettighetene knyttet til handlinger kontrolleres og styres 
+                    gjennom de sessions som opprettes. En session har per i dag en levetid på 30 minutter.
+
+                    Glemmer brukeren passordet, vil "glemt passord" gi brukeren et nytt passord. Det nye passordet 
+                    brukeren får tilsendt blir automatisk hashet og lagret i databasen. 
+                </p>
             </li>
             <li>
                 <h2></h2>
