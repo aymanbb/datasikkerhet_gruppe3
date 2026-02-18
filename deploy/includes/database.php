@@ -20,6 +20,26 @@ class Database
         }
     }
 
+    public function findSubjectByName(string $subject_name)
+    {
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT subject_id, subject_name FROM subjects WHERE subject_name = :subject_name"
+            );
+
+            $stmt->execute(
+                [":subject_name" => $subject_name]
+            );
+            $subject = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$subject) return null;
+
+            return $subject;
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+    }
+
     public function subjectsFetchAll() : array
     {
         try {
