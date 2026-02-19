@@ -47,15 +47,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style.css">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="style.css"> <!-- Optional: Link to your CSS file -->
 </head>
 <body>
-    <h1>Forgot Password</h1>
-    <form action="" method="post">
-        <label for="email">Enter your email address:</label>
-        <input type="email" name="email" id="email" required>
-        <button type="submit">Submit</button>
-    </form>
+    <nav>
+        <ul>
+            <li><a href="guest_login.php">Fortsett som gjest</a></li>
+        </ul>
+    </nav>
+    <article>
+        <h1>Forgot Password</h1>
+        <form action="" method="post">
+            <label for="email">Enter your email address:</label>
+            <input type="email" name="email" id="email" required>
+            <button type="submit">Submit</button>
+        </form>
+    </article>
 </body>
 </html>
