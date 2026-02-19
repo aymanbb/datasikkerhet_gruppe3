@@ -1,8 +1,7 @@
 <?php
 header("Content-Type: application/json");
 // Always return JSON
-require_once(__DIR__ . "/../includes/validation.php");
-require_once(__DIR__ . "/../includes/config.php");
+require_once(__DIR__ . "/../includes/login.php");
 require_once(__DIR__ . "/../includes/database.php");
 
 // Only allow POST
@@ -12,20 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Get headers
-$headers = getallheaders();
-
-// Extract session ID from Authorization header
-if (!empty($headers['Authorization'])) {
-    if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
-        session_id($matches[1]);  // MUST happen before session_start()
-    }
-}
-session_start();
-
 // Get raw JSON input
 $data = json_decode(file_get_contents("php://input"), true);
-
 if (!$data) {
     http_response_code(400);
     echo json_encode(["error" => "Invalid JSON"]);
@@ -35,22 +22,49 @@ if (!$data) {
 $db = new Database();
 $login = new Login();
 
-if ($data['action'] == 'login') {
-    $username = trim($_POST["login_username"]);
-    $password = $_POST["login_password"];
-    $success = $login->login($username, $password);
-    if ($success){
 
+$action = $data['action'] ?? '';
+if ($action === 'login') {
+    $username = $data["username"] ?? '';
+    $password = $data["password"] ?? '';
+    $success = $login->api_login($username, $password);
+    if ($success){
         http_response_code(200);
+        echo json_encode([
+            "session_id" => session_id()
+        ]);
+        
     }else{
         
         http_response_code(400);
     }
     exit;    
+}elseif($action === 'user_student_register'){
+    $username = ($data['username']) ?? '';
+    $email = ($data['email']) ?? '';
+    $password = ($data['password']) ?? '';
+    $success = $db->userStudentRegister($username, $email, $password);
+
+    $request_status = $success ? "user register successful" : "user register not successful";
+    http_response_code(200);
+    echo json_encode([
+        "status" => $request_status
+    ]);
+    exit;
 }
+// NOTE: You should only be able to get here if you are authorized....
+// Let's see if that's the case..
+
+// Extract session ID from Authorization header
+$headers = getallheaders();
+if (!empty($headers['Authorization'])) {
+    if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
+        session_id($matches[1]);  // MUST happen before session_start()
+    }
+}
+session_start();
 
 // Example: simple action switch
-$action = $data['action'] ?? '';
 switch ($action) {
     case "ping":
         echo json_encode([
@@ -66,18 +80,18 @@ switch ($action) {
     //     http_response_code(200);
     //     break;
 
-    case "user_student_register":
-        $username = ($data['username']) ?? '';
-        $email = ($data['email']) ?? '';
-        $password = ($data['password']) ?? '';
-        $success = $db->userStudentRegister($username, $email, $password);
+    // case "user_student_register":
+    //     $username = ($data['username']) ?? '';
+    //     $email = ($data['email']) ?? '';
+    //     $password = ($data['password']) ?? '';
+    //     $success = $db->userStudentRegister($username, $email, $password);
 
-        $request_status = $success ? "user register successful" : "user register not successful";
-        http_response_code(200);
-        echo json_encode([
-            "status" => $request_status
-        ]);
-        break;
+    //     $request_status = $success ? "user register successful" : "user register not successful";
+    //     http_response_code(200);
+    //     echo json_encode([
+    //         "status" => $request_status
+    //     ]);
+    //     break;
 
     case "subjects_fetch_all":
         $subjects = $db->subjectsFetchAll();
@@ -142,54 +156,6 @@ switch ($action) {
 
     default:
         http_response_code(400);
-        echo json_encode(["error" => "Unknown action"]);
+        echo json_encode(["error" => "Unknown action or just a bad move in general."]);
 }
 exit;
-
-//TODO: check credentials?
-
-/*
-Simple API
-
-We would have to use curl, through a commandline, to test the API. 
-
-\ is simply a line break in the command
--H is the header of the post request
--d is the data, in the form of json, that needs to be sent
-
--d should contain:
-    - An "action" field referring to the function that is being called
-    - A field for each of the required parameters of the function call.
-Any extra data there will be discarded.
-
-Here is an example:
-
---- API FUNCTION CALL ---
-curl -X POST http://158.39.188.219/api/api_request_handler.php \
-  -H "Content-Type: application/json" \
-  -b cookies.txt \
-  -d '{
-        "authentication_data": "data",
-        "action": "user_student_register",
-        "username": "name nameson",
-        "email": "email@email.com",
-        "password": "hunter2"
-      }'
-
---- LOGIN REQUEST ---
-You need to authenticate the session in order to use the api:
--c is a reference
-      
-curl -X POST http://158.39.188.219/api/api_request_handler.php \
-  -H "Content-Type: application/json" \
-  -H Authorization: Session abc123sessionid" \
-  -d '{
-        "action": "login",
-        "username": "name nameson",
-        "password": "hunter2"
-      }'
-
-
-In order to do anything, you have to authenticate in some way....allegedly.
-*/
-
