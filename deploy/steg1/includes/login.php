@@ -22,7 +22,7 @@ class Login {
                     'id' => $dbUser['user_id'],
                     'username' => $dbUser['username'] ?? $username,
                     // ensure is_teacher is present and boolean/int
-                    //'is_teacher' => !empty($dbUser['is_teacher']) ? 1 : 0
+                    'is_teacher' => !empty($dbUser['is_teacher']) ? 1 : 0
                 ];
 
                 if (isset($_SESSION['guest'])) {
