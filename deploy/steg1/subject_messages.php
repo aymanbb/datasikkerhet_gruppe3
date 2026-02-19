@@ -9,16 +9,16 @@ $subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
 
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
-if (!isset($_SESSION['logged_in']) && ($_SESSION['guest'] != true && $_SESSION['permitted_subject'] != $subject_id)) {
+if (!isset($_SESSION['logged_in']) && (!isset($_SESSION['guest']) || !isset($_SESSION['permitted_subject']))) {
     header('Location: index.php');
     exit;
 }
 
 // validering paa vei?
 
-$emne_info = $db->getSubjectInfo($subject_id);
+$emne_info = $db->getSubjectInfo((int)$subject_id);
 $emnenavn = $emne_info['subject_name'];
-$foreleser = $db->userFindById($emne_info['teacher_id']);
+$foreleser = $db->userFindById((int)$emne_info['user_id']);
 $foreleser_img = "/steg1/media/" . $foreleser['picture_filename'];
 
 $user_id = $_SESSION['user']['id'] ?? null;

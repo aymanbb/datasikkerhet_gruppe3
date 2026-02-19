@@ -19,12 +19,12 @@ class Login {
                     'id' => $user['user_id'],
                     'username' => $username
                 ];
-                if ($_SESSION['guest'] == true) {
+                if (isset($_SESSION['guest'])) {
                     unset($_SESSION['guest']);
                     unset($_SESSION['permitted_subject']);
                 }
                 $_SESSION['logged_in'] = true;
-                if ($user['is_teacher'] == true) {
+                if (isset($user['is_teacher'])) {
                     $_SESSION['can_message'] = false;
                     $_SESSION['can_answer'] = true;
                     $subject = $db->findSubjectByLecturerId($user['user_id']);
