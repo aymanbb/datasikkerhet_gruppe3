@@ -1,8 +1,7 @@
 <?php
 header("Content-Type: application/json");
 // Always return JSON
-require_once(__DIR__ . "/../includes/validation.php");
-require_once(__DIR__ . "/../includes/config.php");
+require_once(__DIR__ . "/../includes/login.php");
 require_once(__DIR__ . "/../includes/database.php");
 
 // Only allow POST
@@ -12,20 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Get headers
-$headers = getallheaders();
-
-// Extract session ID from Authorization header
-if (!empty($headers['Authorization'])) {
-    if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
-        session_id($matches[1]);  // MUST happen before session_start()
-    }
-}
-session_start();
-
 // Get raw JSON input
 $data = json_decode(file_get_contents("php://input"), true);
-
 if (!$data) {
     http_response_code(400);
     echo json_encode(["error" => "Invalid JSON"]);
@@ -36,18 +23,32 @@ $db = new Database();
 $login = new Login();
 
 if ($data['action'] == 'login') {
-    $username = trim($_POST["login_username"]);
-    $password = $_POST["login_password"];
-    $success = $login->login($username, $password);
+    $username = $data["login_username"];
+    $password = $data["login_password"];
+    $success = $login->api_login($username, $password);
     if ($success){
-
         http_response_code(200);
+        echo json_encode([
+            "session_id" => session_id()
+        ]);
+        
     }else{
         
         http_response_code(400);
     }
     exit;    
 }
+// NOTE: You should only be able to get here if you are authorized....
+// Let's see if that's the case..
+
+// Extract session ID from Authorization header
+$headers = getallheaders();
+if (!empty($headers['Authorization'])) {
+    if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
+        session_id($matches[1]);  // MUST happen before session_start()
+    }
+}
+session_start();
 
 // Example: simple action switch
 $action = $data['action'] ?? '';
@@ -180,16 +181,35 @@ curl -X POST http://158.39.188.219/api/api_request_handler.php \
 You need to authenticate the session in order to use the api:
 -c is a reference
       
-curl -X POST http://158.39.188.219/api/api_request_handler.php \
-  -H "Content-Type: application/json" \
-  -H Authorization: Session abc123sessionid" \
-  -d '{
-        "action": "login",
-        "username": "name nameson",
-        "password": "hunter2"
+curl -X POST http://158.39.188.219/api/api_request_handler.php `
+  -H "Content-Type: application/json" `
+  -d '{ `
+        "action": "login", `
+        "username": "En kjent mann", `
+        "password": "deae00e95446" `
       }'
 
+curl.exe -X POST http://158.39.188.219/steg1/api/api_request_handler.php -H "Content-Type: application/json" -d '{"action": "login", "username": "En kjent mann", "password": "deae00e95446"}'
+
+Invoke-RestMethod -Uri "http://158.39.188.219/steg1/api/api_request_handler.php" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"action":"login","username":"En kjent mann","password":"deae00e95446"}'
 
 In order to do anything, you have to authenticate in some way....allegedly.
+
+$headers = @{
+    "Content-Type" = "application/json"
+    "Authorization" = "session gl8sdsuqhchri3fp5hr925nv5k"
+}  # No backtick here
+
+Invoke-RestMethod `
+  -Uri "http://158.39.188.219/steg1/api/api_request_handler.php" `
+  -Method POST `
+  -Headers $headers `
+  -Body '{"action":"subjects_fetch_all"}' `
+  -ContentType "application/json"
+
+
 */
 
