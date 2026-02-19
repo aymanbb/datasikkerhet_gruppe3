@@ -9,7 +9,7 @@ $subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
 
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
-if (!isset($_SESSION['logged_in']) && (!isset($_SESSION['guest']) || !isset($_SESSION['permitted_subject']))) {
+if (!isset($_SESSION['logged_in']) && (!isset($_SESSION['guest']) || $_SESSION['permitted_subject'] != $subject_id)) {
     header('Location: index.php');
     exit;
 }
@@ -44,11 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $answerText = isset($_POST['answer']) ? trim((string)$_POST['answer']) : '';
             if ($msgId > 0 && $answerText !== '') {
                 // If logged in user is a teacher, use subjectMessageAnswerSubmit
-                if (!empty($user) && !empty($user['is_teacher'])) {
+                if ($user['user_id'] == $foreleser['user_id']) {
                     $db->subjectMessageAnswerSubmit($msgId, $answerText);
                 }
-                // Else if this is a guest session, use messageCommentSubmit
-                elseif (!empty($_SESSION['guest'])) {
+                // Else if this is a guest or student session, use messageCommentSubmit
+                elseif(isset($_SESSION['guest'])) {
                     $db->messageCommentSubmit($msgId, $answerText);
                 }
                 // Otherwise, no valid submitter found
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     // message submission using GET (kept as in your HTML)
     if (isset($_GET['test-melding-submit'])) {
         // Only allow sending a message if session flag allows it
-        if (! $user_can_message) {
+        if (!$user_can_message) {
             $message = 'Du har ikke tillatelse til å sende melding for dette emnet.';
         } else {
             $user_id = $user_id ?? ($_SESSION['user']['id'] ?? null);
@@ -100,7 +100,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 render_page:
 
-// helper to detect presence of an "answer", treating SQL NULL, empty string and literal 'NULL' as absent
 function answer_present($val) {
     return ($val !== null && $val !== '' && $val !== 'NULL');
 }
@@ -113,110 +112,7 @@ function answer_present($val) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> meldinger</title>
-        <style>
-            body {
-
-                #skip {
-                    bottom: 0;
-                    position: fixed;
-                    right: 3rem;
-                    margin: 1rem;
-                    padding: 1rem;
-                    height: 3rem;
-                    width: fit-content;
-                    align-items: center;
-                    display: flex;
-                    font-size: 16px;
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-                    text-decoration: none;
-                    border: 3px solid black;
-                }
-
-                nav{
-                    margin: 0.5rem;
-
-                    a{
-                        text-decoration: none;
-                    }
-                } 
-
-                button {
-                    max-width: max-content;
-                }
-
-                section {
-                    display: flex;
-                    flex-direction: column;
-
-                    h1 {
-                        justify-content: center;
-                        display: flex;
-                    }
-
-                    nav ul {
-                        padding: 0;
-                        list-style: none;
-                        margin: auto;
-                        display: flex;
-                        justify-content: center;
-
-                        li {
-                            margin: 0.5rem;
-
-                            a{
-                                text-decoration: none;
-                            }
-                        }
-                    }
-
-                    article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-                        
-
-                        .melding{
-                            border: 1px solid black;
-                            padding: 4px;
-                        }
-                    }
-                }
-            
-                article {
-                    display: flex;
-                    flex-direction: column;
-                    border: 3px solid black;
-                    padding: 2rem;
-                    width: 50dvw;
-                    margin: 1rem auto 1rem auto;
-
-                    h2{
-                        width: 50dvw;
-                    }
-
-                    img{
-                        max-width: 150px;
-                    }
-
-                    form {
-                        display: flex;
-                        flex-direction: column;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-
-                        textarea {
-                            resize: none;
-                        }
-
-                        button {
-                            padding: 3px 10px 3px 10px;
-                            margin-top: 0.5rem;
-                        }
-                    }
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="styles/style_subjectmessages.css">
     </head>
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
@@ -224,14 +120,12 @@ function answer_present($val) {
             <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
             <nav>
                 <ul>
-                    <li><a href="index.php">Gå til forsiden</a></li>
-                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
                     <li><a href="forgot-password.php">Glemt passord?</a></li>
-                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
-                    
+                    <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
+                    <li><a href="logout.php">Logg ut</a></li>
                 </ul>
             </nav>
-                        <article>
+            <article>
                 <h2>Foreleser</h2>
                 <p>
                     Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?>
@@ -246,14 +140,16 @@ function answer_present($val) {
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
                     <h3>
-                        <?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id'], ENT_QUOTES, 'UTF-8') . ' ' ?>
                         Fra anonym:
                     </h3>
 
                     <p class="message"><?= htmlspecialchars($subject_message['message_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
 
                     <?php if (answer_present($subject_message['answer'] ?? null)): ?>
-                        <p class="answer"><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <section class="comment-answer">
+                            <h4>Svar fra foreleser:</h4>
+                            <p><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+                        </section>
                     <?php endif; ?>
 
                     <?php
@@ -261,7 +157,10 @@ function answer_present($val) {
                     $subject_comments = $db->messageCommentsFetchAll((int)$subject_message['message_id']);
                     if (!empty($subject_comments) && is_array($subject_comments)):
                         foreach ($subject_comments as $comment): ?>
-                            <p class="comment"><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                        <section class="comment-answer">
+                            <h4>Anonym kommentar:</h4>
+                            <p><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                        </section>
                         <?php endforeach;
                     endif;
                     ?>

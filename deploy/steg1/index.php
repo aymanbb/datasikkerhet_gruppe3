@@ -15,7 +15,7 @@ if (isset($_SESSION['logged_in'])) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST['login_submit'])) { // Login for users and lecturers
+    if (isset($_POST['login_submit'])) { 
         $username = trim($_POST["login_username"]);
         $password = $_POST["login_password"];
 
@@ -44,69 +44,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gruppe 3</title>
-    <style>
-        body {
-                margin: 3rem;
-
-                nav ul {
-                    padding: 0;
-                    list-style: none;
-                    margin: auto;
-                    display: flex;
-                    justify-content: center;
-
-                    li {
-                        margin: 0.5rem;
-
-                        a{
-                            text-decoration: none;
-                        }
-                    }
-                }
-
-                h1{
-                    display: flex;
-                    justify-content: center;
-                }
-
-                article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-
-                        form{
-                                display: flex;
-                                flex-direction: column;
-
-                                label{
-                                        padding-top: 1rem;
-                                }
-
-                                button{
-                                    margin-top: 1rem;
-                                }
-                        }
-                }
-                section {
-                        display: flex;
-                        flex-direction: column;
-                        padding: 2rem 0rem 2rem 0rem;
-                }
-        }
-    </style>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
-
 <body>
-    <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <nav>
         <ul>
             <li><a href="guest_login.php">Fortsett som gjest</a></li>
-            <li><a href="#">Glemt passord?</a></li>
-            <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
-            <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+            <li><a href="forgot-password.php">Glemt passord?</a></li>
         </ul>
     </nav>
+    <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <article>
         <h2>Logg inn</h2>
         <form action="" method="post">

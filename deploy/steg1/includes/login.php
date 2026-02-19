@@ -22,7 +22,7 @@ class Login {
                     'id' => $dbUser['user_id'],
                     'username' => $dbUser['username'] ?? $username,
                     // ensure is_teacher is present and boolean/int
-                    'is_teacher' => !empty($dbUser['is_teacher']) ? 1 : 0
+                    //'is_teacher' => !empty($dbUser['is_teacher']) ? 1 : 0
                 ];
 
                 if (isset($_SESSION['guest'])) {
@@ -45,7 +45,7 @@ class Login {
                         header("Location: subject_messages.php?" . $params, true, 303);
                         exit;
                     } catch (PDOException $e) {
-                        die("Serious error message for serious problems" . $e->getMessage());
+                        die("Serious error message for serious problems");
                     }
                 } else {
                     // student path
