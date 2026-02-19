@@ -190,17 +190,14 @@ function answer_present($val) {
     </head>
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
+        <nav>
+            <ul>
+                <li><a href="guest_login.php">Fortsett som gjest</a></li>
+                <li><a href="forgot-password.php">Glemt passord?</a></li>
+            </ul>
+        </nav>
         <section>
             <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Gå til forsiden</a></li>
-                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
-                    <li><a href="forgot-password.php">Glemt passord?</a></li>
-                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
-                    
-                </ul>
-            </nav>
             <article>
                 <h2>Foreleser</h2>
                 <p>Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> er <?= htmlspecialchars($foreleser['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>. Kan nås på e-post: <?= htmlspecialchars($foreleser['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>

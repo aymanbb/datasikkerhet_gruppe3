@@ -49,16 +49,13 @@
     </style>
 </head>
 <body>
-    <h1>Registrer foreleser</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Gå til forsiden</a></li>
             <li><a href="guest_login.php">Fortsett som gjest</a></li>
-            <li><a href="#">Glemt passord?</a></li>
-            <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
-            <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+            <li><a href="forgot-password.php">Glemt passord?</a></li>
         </ul>
     </nav>
+    <h1>Registrer foreleser</h1>
     <article>
         <h2>Registrer deg som foreleser</h2>
         <form action="foreleser_register_process.php" method="post" enctype="multipart/form-data">

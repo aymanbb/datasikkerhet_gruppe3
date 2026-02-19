@@ -15,7 +15,7 @@ if (isset($_SESSION['logged_in'])) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST['login_submit'])) { // Login for users and lecturers
+    if (isset($_POST['login_submit'])) { 
         $username = trim($_POST["login_username"]);
         $password = $_POST["login_password"];
 
@@ -98,15 +98,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-    <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <nav>
         <ul>
             <li><a href="guest_login.php">Fortsett som gjest</a></li>
-            <li><a href="#">Glemt passord?</a></li>
-            <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
-            <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+            <li><a href="forgot-password.php">Glemt passord?</a></li>
         </ul>
     </nav>
+    <h1>Velkommen til gruppe 3 sin supersikre hjemmeside!</h1>
     <article>
         <h2>Logg inn</h2>
         <form action="" method="post">

@@ -48,9 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="style.css"> <!-- Optional: Link to your CSS file -->
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="guest_login.php">Fortsett som gjest</a></li>
+        </ul>
+    </nav>
     <h1>Forgot Password</h1>
     <form action="" method="post">
         <label for="email">Enter your email address:</label>
