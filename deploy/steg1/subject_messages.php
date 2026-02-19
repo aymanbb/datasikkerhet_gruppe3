@@ -100,7 +100,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 render_page:
 
-// helper to detect presence of an "answer", treating SQL NULL, empty string and literal 'NULL' as absent
 function answer_present($val) {
     return ($val !== null && $val !== '' && $val !== 'NULL');
 }
@@ -143,14 +142,16 @@ function answer_present($val) {
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
                     <h3>
-                        <?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id'], ENT_QUOTES, 'UTF-8') . ' ' ?>
                         Fra anonym:
                     </h3>
 
                     <p class="message"><?= htmlspecialchars($subject_message['message_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
 
                     <?php if (answer_present($subject_message['answer'] ?? null)): ?>
-                        <p class="answer"><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <section>
+                            <h4>Svar fra foreleser:</h4>
+                            <p class="comment-answer"><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+                        </section>
                     <?php endif; ?>
 
                     <?php
@@ -158,7 +159,10 @@ function answer_present($val) {
                     $subject_comments = $db->messageCommentsFetchAll((int)$subject_message['message_id']);
                     if (!empty($subject_comments) && is_array($subject_comments)):
                         foreach ($subject_comments as $comment): ?>
-                            <p class="comment"><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                        <section>
+                            <h4>Anonym kommentar:</h4>
+                            <p class="comment-answer"><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                        </section>
                         <?php endforeach;
                     endif;
                     ?>
