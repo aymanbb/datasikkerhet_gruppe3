@@ -107,17 +107,21 @@ function answer_present($val) {
                 <article>
                     <h3>Fra anonym:</h3>
                     <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
-                        <?php if (answer_present($subject_message['answer'])): ?>
-                                <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
-                        <?php else: ?>
-                                <?php if ($user_can_answer): ?>
-                                    <form action="" method="POST">
-                                        <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
-                                        <textarea name="answer" maxlength="256" rows="10" cols="50"></textarea>
-                                        <button type="submit" name="answer_submit">Svar</button>
-                                    </form>
-                                <?php endif; ?>
-                        <?php endif; ?> 
+                    
+                    <?php if (answer_present($subject_message['answer'])): ?>
+                    <section class="lecturer-answer">
+                        <h4>Svar fra foreleser:</h4>
+                        <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
+                    </section>
+                    <?php else: ?>
+                        <?php if ($user_can_answer): ?>
+                        <form class="lecturer-answer" action="" method="POST">
+                            <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
+                            <textarea name="answer" maxlength="256" rows="10" cols="50"></textarea>
+                            <button type="submit" name="answer_submit">Svar</button>
+                        </form>
+                        <?php endif; ?>
+                    <?php endif; ?> 
                 </article>
             <?php endforeach; ?>
         </section>

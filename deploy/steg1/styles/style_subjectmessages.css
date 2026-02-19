@@ -60,19 +60,6 @@
                             }
                         }
                     }
-
-                    article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-                        
-
-                        .melding{
-                            border: 1px solid black;
-                            padding: 4px;
-                        }
-                    }
                 }
             
                 article {
@@ -83,12 +70,23 @@
                     width: 50dvw;
                     margin: 1rem auto 1rem auto;
 
+                    .melding{
+                        border: 1px solid black;
+                        padding: 4px;
+                    }
+
                     h2{
                         width: 50dvw;
                     }
 
                     img{
                         max-width: 150px;
+                    }
+
+                    .lecturer-answer{
+                        border: 3px solid black;
+                        padding: 1rem;
+                        max-width: 95%;
                     }
 
                     form {
