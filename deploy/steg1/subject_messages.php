@@ -9,7 +9,7 @@ $subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
 
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
-if (!isset($_SESSION['logged_in']) && (!isset($_SESSION['guest']) || !isset($_SESSION['permitted_subject']))) {
+if (!isset($_SESSION['logged_in']) && (!isset($_SESSION['guest']) || $_SESSION['permitted_subject'] != $subject_id)) {
     header('Location: index.php');
     exit;
 }
@@ -44,11 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $answerText = isset($_POST['answer']) ? trim((string)$_POST['answer']) : '';
             if ($msgId > 0 && $answerText !== '') {
                 // If logged in user is a teacher, use subjectMessageAnswerSubmit
-                if (!empty($user) && !empty($user['is_teacher'])) {
+                if ($user['user_id'] == $foreleser['user_id']) {
                     $db->subjectMessageAnswerSubmit($msgId, $answerText);
                 }
-                // Else if this is a guest session, use messageCommentSubmit
-                elseif (!empty($_SESSION['guest'])) {
+                // Else if this is a guest or student session, use messageCommentSubmit
+                elseif(isset($_SESSION['guest'])) {
                     $db->messageCommentSubmit($msgId, $answerText);
                 }
                 // Otherwise, no valid submitter found
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     // message submission using GET (kept as in your HTML)
     if (isset($_GET['test-melding-submit'])) {
         // Only allow sending a message if session flag allows it
-        if (! $user_can_message) {
+        if (!$user_can_message) {
             $message = 'Du har ikke tillatelse til å sende melding for dette emnet.';
         } else {
             $user_id = $user_id ?? ($_SESSION['user']['id'] ?? null);
@@ -122,6 +122,7 @@ function answer_present($val) {
                 <ul>
                     <li><a href="forgot-password.php">Glemt passord?</a></li>
                     <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
+                    <li><a href="logout.php">Logg ut</a></li>
                 </ul>
             </nav>
             <article>

@@ -50,6 +50,7 @@ $subjects = $db->subjectsFetchAll();
             <nav>
                 <ul>
                     <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
+                    <li><a href="logout.php">Logg ut</a></li>
                 </ul>
             </nav>
             <?php

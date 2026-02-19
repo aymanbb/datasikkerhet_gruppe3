@@ -131,11 +131,6 @@ class Database
                 "CALL addAnswerToMessage (:message_id, :answer);"
                 );
 
-                $stmt = $this->pdo->prepare(
-                    "UPDATE messages SET answer = :answer
-                    WHERE :message_id = message_id AND answer IS NULL;"
-                );
-
                 return $stmt->execute(
                     [
                         ":message_id" => $message_id,
@@ -196,11 +191,12 @@ class Database
             $stmt = $this->pdo->prepare(
                 "CALL addComment (:message_id, :comment_body);"
             );
-
-            return $stmt->execute([
-                ":comment_body" => $comment_body,
-                ":message_id" => $message_id
-            ]);
+            return $stmt->execute(
+                [
+                    ":message_id" => $message_id,
+                    ":comment_body" => $comment_body,
+                ]
+            );
         } catch (PDOException $e) {
             $this->panic(__FILE__, __LINE__,$e);
         }
