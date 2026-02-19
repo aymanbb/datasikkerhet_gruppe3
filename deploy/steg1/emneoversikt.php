@@ -4,15 +4,13 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
-
-
-
 $db = new Database();
 
 if (!isset($_SESSION['logged_in'])) {
     header("Location: index.php");
     exit;
 }
+
 
 $user_id = getSessionUserId();
 $user = $db->userFindById($user_id);
@@ -22,6 +20,10 @@ $is_guest = isset($_SESSION['guest']);
 $is_teacher = false;
 if ($user != null) {
     $is_teacher = (bool)$user['is_teacher'];
+}else{
+    // WARNING: Should not get here!
+    http_response_code(569);
+    exit;
 }
 
 if ($is_teacher) {

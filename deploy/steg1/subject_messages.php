@@ -18,10 +18,10 @@ $db = new Database();
 
 $emne_info = $db->getSubjectInfo((int)$subject_id);
 $emnenavn = $emne_info['subject_name'];
-$foreleser = $db->userFindById($emne_info['teacher_id']);
+$foreleser = $db->userFindById((int)$emne_info['teacher_id']);
 $foreleser_img = "/steg1//media/" . $foreleser['picture_filename'];
 
-$user_id = isset($_SESSION['user']) ? $_SESSION['user']['id'] : -1;
+$user_id = getSessionUserId();
 $user = $db->userFindById($user_id);
 $is_guest = isset($_SESSION['guest']);
 
@@ -29,6 +29,10 @@ $is_guest = isset($_SESSION['guest']);
 $is_teacher = false;
 if ($user != null) {
     $is_teacher = (bool)$user['is_teacher'];
+} else {
+    // WARNING: Should not get here!
+    http_response_code(569);
+    exit;
 }
 $user_can_comment = $is_guest == true || $is_teacher == false;
 $user_can_answer =  $is_teacher;
@@ -46,10 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         //answer
         //subject_ID
         $db->subjectMessageSubmit((int)$user_id, (int)$subject_id, $new_message);
-    }
-    if (isset($_GET['answer-submit'])) {
-        echo "Should post this shit";
+    }elseif (isset($_GET['answer-submit'])) {
         $db->subjectMessageAnswerSubmit((int)$_GET['message_id'], $_GET['answer']);
+        header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
+        exit;
+    }
+    elseif (isset($_GET['comment-submit'])) {
+        $db->MessageCommentSubmit($user_id, (int)$_GET['message_id'], $_GET['comment_body']);
         header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
         exit;
     }
@@ -193,8 +200,10 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <article>
                 <h3>Fra anonym:</h3>
                 <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
-                <?php if ($subject_message['answer'] !== null): ?>
+                <?php if ($subject_message['answer'] !== 'NULL'): // <-- I CANNOT BELIEVE THIS WHAT THE FUCK 
+                ?>
                     <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
+
                 <?php elseif ($user_can_answer == true): ?>
                     <form action="" method="GET">
                         <input type="hidden" name="ref" value="<?= $subject_id ?>">
@@ -203,7 +212,28 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         <button type="submit" name="answer-submit">Svar</button>
                     </form>
                 <?php endif; ?>
+
             </article>
+            <?php foreach ($db->MessageCommentsFetchAll((int)$subject_message['message_id']) as $message_comment): ?>
+                <article>
+                    <h3>Fra anonym:</h3>
+                    <p class="comment"><?= htmlspecialchars($message_comment['comment_body']) ?></p>
+                </article>
+            <?php endforeach; ?>
+
+            <?php if ($user_can_comment == true): // COMMENT INPUT FIELD
+            ?>
+                <article>
+                    <h3>Skriv en kommentar:</h3>
+                    <form action="" method="GET">
+                        <input type="hidden" name="ref" value="<?= $subject_id ?>">
+                        <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
+                        <textarea name="comment_body" maxlength="256" rows="10" cols="50"></textarea>
+                        <button type="submit" name="comment-submit">kommenter</button>
+                    </form>
+                </article>
+            <?php endif; ?>
+
         <?php endforeach; ?>
     </section>
     <?php if ($user_can_message): ?>

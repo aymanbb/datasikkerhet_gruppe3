@@ -187,6 +187,28 @@ class Database
         }
     }
 
+    public function MessageCommentSubmit(int $user_id, int $message_id, string $comment_body): bool
+    {
+        if (!validateFreetext($comment_body)){
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare(
+                //"CALL addComment (:message_id, :comment_body);"
+                "INSERT INTO comments (message_id, comment_body) 
+                VALUES(:message_id, :comment_body);"
+            );
+
+            return $stmt->execute([
+                ":comment_body" => $comment_body,
+                ":message_id" => $message_id
+            ]);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return false;
+    }
+
     public function userLecturerRegister($username, $email, $password, $image, $subject, $pin): bool
     {
         if (!(validateUsername($username) || validateEmail($email) || validatePassword($password) || validateSubject($subject) || validateSubjectPin($pin))) {
@@ -246,7 +268,9 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT user_id, is_teacher, email, picture_filename, username, password FROM users WHERE username = :username LIMIT 1"
+                "SELECT user_id, is_teacher, email, picture_filename, username, password 
+                FROM users 
+                WHERE username = :username LIMIT 1"
             );
 
             $stmt->execute([':username' => $username]);

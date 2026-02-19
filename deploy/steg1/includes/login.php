@@ -20,7 +20,8 @@ class Login {
                     'username' => $username
                 ];
                 $_SESSION['logged_in'] = true;
-                if ($user['is_teacher'] === 1) {
+                
+                if ($user['is_teacher'] == true) {
 
                     $subject = $db->findSubjectByLecturerId($user['user_id']);
                     try {
