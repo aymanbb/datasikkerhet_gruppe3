@@ -46,12 +46,6 @@ $subjects = $db->subjectsFetchAll();
     </head>
     <body>
         <section>
-            <nav>
-                <ul>
-                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
-                    <li><a href="forgot-password.php">Glemt passord?</a></li>
-                </ul>
-            </nav>
             <h1>Emner du har tilgang til</h1>
             <?php
                 foreach ($subjects as $subject):

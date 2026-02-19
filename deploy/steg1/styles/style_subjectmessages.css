@@ -87,6 +87,7 @@
                         border: 3px solid black;
                         padding: 1rem;
                         max-width: 95%;
+                        margin: 1rem;
                     }
 
                     form {

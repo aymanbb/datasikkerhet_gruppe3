@@ -48,13 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <link rel="stylesheet" href="styles/style_guestlogin.css">
     </head>
     <body>
+        <h1>Logg inn som gjest</h1>
         <nav>
             <ul>
-                <li><a href="guest_login.php">Fortsett som gjest</a></li>
                 <li><a href="forgot-password.php">Glemt passord?</a></li>
             </ul>
         </nav>
-        <h1>Logg inn som gjest</h1>
         <form method="post">
             <label for="pincode">Emne-PIN:</label><br>
             <input

@@ -120,14 +120,10 @@ function answer_present($val) {
             <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
             <nav>
                 <ul>
-                    <li><a href="index.php">Gå til forsiden</a></li>
-                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
                     <li><a href="forgot-password.php">Glemt passord?</a></li>
-                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
-                    
                 </ul>
             </nav>
-                        <article>
+            <article>
                 <h2>Foreleser</h2>
                 <p>
                     Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?>
@@ -148,9 +144,9 @@ function answer_present($val) {
                     <p class="message"><?= htmlspecialchars($subject_message['message_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
 
                     <?php if (answer_present($subject_message['answer'] ?? null)): ?>
-                        <section>
+                        <section class="comment-answer">
                             <h4>Svar fra foreleser:</h4>
-                            <p class="comment-answer"><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p><?= htmlspecialchars($subject_message['answer'], ENT_QUOTES, 'UTF-8') ?></p>
                         </section>
                     <?php endif; ?>
 
@@ -159,9 +155,9 @@ function answer_present($val) {
                     $subject_comments = $db->messageCommentsFetchAll((int)$subject_message['message_id']);
                     if (!empty($subject_comments) && is_array($subject_comments)):
                         foreach ($subject_comments as $comment): ?>
-                        <section>
+                        <section class="comment-answer">
                             <h4>Anonym kommentar:</h4>
-                            <p class="comment-answer"><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                            <p><?= htmlspecialchars($comment['comment_body'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
                         </section>
                         <?php endforeach;
                     endif;
