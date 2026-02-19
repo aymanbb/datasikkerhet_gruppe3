@@ -19,9 +19,14 @@ class Login {
                     'id' => $user['user_id'],
                     'username' => $username
                 ];
+                if ($_SESSION['guest'] == true) {
+                    unset($_SESSION['guest']);
+                    unset($_SESSION['permitted_subject']);
+                }
                 $_SESSION['logged_in'] = true;
-                if ($user['is_teacher'] == 1) {
-
+                if ($user['is_teacher'] == true) {
+                    $_SESSION['can_message'] = false;
+                    $_SESSION['can_answer'] = true;
                     $subject = $db->findSubjectByLecturerId($user['user_id']);
                     try {
                         $params = http_build_query([
@@ -33,7 +38,10 @@ class Login {
                         die("Serious error message for serious problems" . $e->getMessage());
                     }
                 } else {
+                    $_SESSION['can_message'] = true;
+                    $_SESSION['can_answer'] = false;
                     header("Location: emneoversikt.php");
+                    exit;
                 }
                 exit;
             } else {
@@ -71,7 +79,7 @@ class Login {
                 }
             }
         }
-        
+
         return false;
     }
 }
