@@ -45,51 +45,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <head>
         <meta charset="UTF-8">
         <title>Subject pincode Login</title>
-        <style>
-            body{
-                margin: 3rem;
-
-                h1{
-                    display: flex;
-                    justify-content: center;
-                }
-
-                nav ul {
-                    padding: 0;
-                    list-style: none;
-                    margin: auto;
-                    display: flex;
-                    justify-content: center;
-
-                    li {
-                        margin: 0.5rem;
-
-                    a{
-                        text-decoration: none;
-                    }
-                }
-                }
-
-                form {
-                    border: 3px solid black;
-                    padding: 2rem;
-                    width: 50dvw;
-                    margin: 1rem auto 1rem auto;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="styles/style_guestlogin.css">
     </head>
     <body>
-        <h1>Logg inn som gjest</h1>
         <nav>
             <ul>
-                <li><a href="index.php">Gå til forsiden</a></li>
                 <li><a href="guest_login.php">Fortsett som gjest</a></li>
-                <li><a href="#">Glemt passord?</a></li>
-                <li><a href="subject_messages.php">Meldinger - HUSK Å FJERNE</a></li>
-                <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+                <li><a href="forgot-password.php">Glemt passord?</a></li>
             </ul>
         </nav>
+        <h1>Logg inn som gjest</h1>
         <form method="post">
             <label for="pincode">Emne-PIN:</label><br>
             <input

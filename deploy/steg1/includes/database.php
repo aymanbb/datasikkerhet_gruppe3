@@ -156,7 +156,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_id, message_body, message_id, answer FROM messages WHERE subject_id = :subject_id"
+                "SELECT message_id, user_id, message_body, answer, subject_id FROM messages WHERE subject_id = :subject_id"
             );
 
             $stmt->execute([":subject_id" => $subject_id]);
@@ -391,7 +391,7 @@ class Database
 
             $row =  $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$row) return null;
+            if (!$row) return;
 
             return $row;
         } catch (PDOException $e) {
