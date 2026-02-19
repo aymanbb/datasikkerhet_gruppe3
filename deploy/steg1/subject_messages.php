@@ -121,6 +121,7 @@ function answer_present($val) {
             <nav>
                 <ul>
                     <li><a href="forgot-password.php">Glemt passord?</a></li>
+                    <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
                 </ul>
             </nav>
             <article>

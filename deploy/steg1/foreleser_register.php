@@ -11,6 +11,7 @@
         <ul>
             <li><a href="guest_login.php">Fortsett som gjest</a></li>
             <li><a href="forgot-password.php">Glemt passord?</a></li>
+            <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
         </ul>
     </nav>
     <h1>Registrer foreleser</h1>

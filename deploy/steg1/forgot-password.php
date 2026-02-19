@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav>
         <ul>
             <li><a href="guest_login.php">Fortsett som gjest</a></li>
+            <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
         </ul>
     </nav>
     <article>

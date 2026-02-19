@@ -47,6 +47,11 @@ $subjects = $db->subjectsFetchAll();
     <body>
         <section>
             <h1>Emner du har tilgang til</h1>
+            <nav>
+                <ul>
+                    <li><a href="dokumentasjon.html">Dokumentasjon</a></li>
+                </ul>
+            </nav>
             <?php
                 foreach ($subjects as $subject):
                     $name = $subject['subject_name'];
