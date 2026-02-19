@@ -122,30 +122,30 @@ class Database
         return false;
     }
 
-    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): array
+    public function subjectMessageAnswerSubmit(int $message_id, string $message_body): bool
     {
-        if (!validateFreetext($message_body)) {
-            return [];
-        }
+        if (!validateFreetext($message_body)) return false;
 
-        try {
-            $stmt = $this->pdo->prepare(
+            try{
+                $stmt = $this->pdo->prepare(
                 "CALL addAnswerToMessage (:message_id, :answer);"
-            );
+                );
 
-            $stmt->execute(
-                [
-                    ":message_id" => $message_id,
-                    ":answer" => $message_body,
-                ]
-            );
+                $stmt = $this->pdo->prepare(
+                    "UPDATE messages SET answer = :answer
+                    WHERE :message_id = message_id AND answer IS NULL;"
+                );
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            $this->panic(__FILE__, __LINE__,$e);
-            return [];
-        }
+                return $stmt->execute(
+                    [
+                        ":message_id" => $message_id,
+                        ":answer" => $message_body,
+                    ]
+                );
+            } catch (PDOException $e) {
+                $this->panic(__FILE__, __LINE__, $e);
+                return false;
+            }
     }
 
     public function subjectMessageFetchAll(int $subject_id): array
@@ -156,7 +156,7 @@ class Database
 
         try {
             $stmt = $this->pdo->prepare(
-                "SELECT subject_id, message_body, message_id FROM messages WHERE subject_id = :subject_id"
+                "SELECT subject_id, message_body, message_id, answer FROM messages WHERE subject_id = :subject_id"
             );
 
             $stmt->execute([":subject_id" => $subject_id]);
@@ -167,7 +167,7 @@ class Database
         }
     }
 
-    public function MessageCommentsFetchAll(int $message_id): array
+    public function messageCommentsFetchAll(int $message_id): array
     {
         if (!validateMessageID($message_id)) {
             return [];
@@ -185,6 +185,26 @@ class Database
             $this->panic(__FILE__, __LINE__,$e);
             return [];
         }
+    }
+
+    public function messageCommentSubmit(int $message_id, string $comment_body): bool
+    {
+        if (!validateFreetext($comment_body)){
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare(
+                "CALL addComment (:message_id, :comment_body);"
+            );
+
+            return $stmt->execute([
+                ":comment_body" => $comment_body,
+                ":message_id" => $message_id
+            ]);
+        } catch (PDOException $e) {
+            $this->panic(__FILE__, __LINE__,$e);
+        }
+        return false;
     }
 
     public function userLecturerRegister($username, $email, $password, $image, $subject, $pin): bool
