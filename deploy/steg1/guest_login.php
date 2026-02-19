@@ -45,39 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <head>
         <meta charset="UTF-8">
         <title>Subject pincode Login</title>
-        <style>
-            body{
-                margin: 3rem;
-
-                h1{
-                    display: flex;
-                    justify-content: center;
-                }
-
-                nav ul {
-                    padding: 0;
-                    list-style: none;
-                    margin: auto;
-                    display: flex;
-                    justify-content: center;
-
-                    li {
-                        margin: 0.5rem;
-
-                    a{
-                        text-decoration: none;
-                    }
-                }
-                }
-
-                form {
-                    border: 3px solid black;
-                    padding: 2rem;
-                    width: 50dvw;
-                    margin: 1rem auto 1rem auto;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="styles/style_guestlogin.css">
     </head>
     <body>
         <nav>

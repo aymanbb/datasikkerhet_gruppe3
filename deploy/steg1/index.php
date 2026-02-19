@@ -44,59 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gruppe 3</title>
-    <style>
-        body {
-                margin: 3rem;
-
-                nav ul {
-                    padding: 0;
-                    list-style: none;
-                    margin: auto;
-                    display: flex;
-                    justify-content: center;
-
-                    li {
-                        margin: 0.5rem;
-
-                        a{
-                            text-decoration: none;
-                        }
-                    }
-                }
-
-                h1{
-                    display: flex;
-                    justify-content: center;
-                }
-
-                article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-
-                        form{
-                                display: flex;
-                                flex-direction: column;
-
-                                label{
-                                        padding-top: 1rem;
-                                }
-
-                                button{
-                                    margin-top: 1rem;
-                                }
-                        }
-                }
-                section {
-                        display: flex;
-                        flex-direction: column;
-                        padding: 2rem 0rem 2rem 0rem;
-                }
-        }
-    </style>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
-
 <body>
     <nav>
         <ul>

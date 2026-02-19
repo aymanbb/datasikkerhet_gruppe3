@@ -82,111 +82,8 @@ function answer_present($val) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> meldinger</title>
-        <style>
-            body {
-
-                #skip {
-                    bottom: 0;
-                    position: fixed;
-                    right: 3rem;
-                    margin: 1rem;
-                    padding: 1rem;
-                    height: 3rem;
-                    width: fit-content;
-                    align-items: center;
-                    display: flex;
-                    font-size: 16px;
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-                    text-decoration: none;
-                    border: 3px solid black;
-                }
-
-                nav{
-                    margin: 0.5rem;
-
-                    a{
-                        text-decoration: none;
-                    }
-                } 
-
-                button {
-                    max-width: max-content;
-                }
-
-                section {
-                    display: flex;
-                    flex-direction: column;
-
-                    h1 {
-                        justify-content: center;
-                        display: flex;
-                    }
-
-                    nav ul {
-                        padding: 0;
-                        list-style: none;
-                        margin: auto;
-                        display: flex;
-                        justify-content: center;
-
-                        li {
-                            margin: 0.5rem;
-
-                            a{
-                                text-decoration: none;
-                            }
-                        }
-                    }
-
-                    article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-                        
-
-                        .melding{
-                            border: 1px solid black;
-                            padding: 4px;
-                        }
-                    }
-                }
-            
-                article {
-                    display: flex;
-                    flex-direction: column;
-                    border: 3px solid black;
-                    padding: 2rem;
-                    width: 50dvw;
-                    margin: 1rem auto 1rem auto;
-
-                    h2{
-                        width: 50dvw;
-                    }
-
-                    img{
-                        max-width: 150px;
-                    }
-
-                    form {
-                        display: flex;
-                        flex-direction: column;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-
-                        textarea {
-                            resize: none;
-                        }
-
-                        button {
-                            padding: 3px 10px 3px 10px;
-                            margin-top: 0.5rem;
-                        }
-                    }
-                }
-            }
-        </style>
+        <title><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> meldinger</title>       
+        <link rel="stylesheet" href="styles/style_subjectmessages.css">
     </head>
     <body>
         <a href="#send_message" id="skip">Hopp til bunnen</a>
@@ -205,7 +102,7 @@ function answer_present($val) {
             </article>
             <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
-                    <h3><?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id']) . " " ?>Fra anonym:</h3>
+                    <h3>Fra anonym:</h3>
                     <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
                         <?php if (answer_present($subject_message['answer'])): ?>
                                 <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
