@@ -16,7 +16,7 @@ $lockoutTime = 900; // Lockout period in seconds (15 minutes)
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
     session_unset();
     session_destroy();
-    header('Location: login.php'); 
+    header('Location: index.php'); 
     }
 // Function to reset login attempts
 function resetAttempts() {
