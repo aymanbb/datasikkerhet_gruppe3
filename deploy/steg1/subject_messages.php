@@ -1,19 +1,17 @@
 <?php
-
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
 
-// read subject id (no extra validation per your request)
 $subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
 
-// original auth check left as-is (you said not to change unrelated logic)
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
 if (!isset($_SESSION['logged_in']) && ($_SESSION['guest'] != true && $_SESSION['permitted_subject'] != $subject_id)) {
     header('Location: index.php');
+    exit;
 }
 
 // validering paa vei?
@@ -23,23 +21,16 @@ $emnenavn = $emne_info['subject_name'];
 $foreleser = $db->userFindById($emne_info['teacher_id']);
 $foreleser_img = "/steg1/media/" . $foreleser['picture_filename'];
 
-// Use session user id directly as requested
 $user_id = $_SESSION['user']['id'] ?? null;
+$user = $db->userFindById((int)$user_id);
 
-// Read only the two session flags you specified:
-// - can_message: permission to submit subject messages (test-melding).
-// - can_answer: permission to post comments/answers on messages.
-// Normalize them to booleans so checks are reliable.
 $user_can_message = !empty($_SESSION['can_message']);
 $user_can_answer  = !empty($_SESSION['can_answer']);
 
-// initialize message feedback
 $message = '';
 
-// fetch messages for display (ensure $subject_messages exists if no submission)
 $subject_messages = [];
 
-// Handle POST (answer submissions)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST['answer_submit'])) {
         // Only allow answering if session flag permits it
@@ -49,7 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $msgId = isset($_POST['message_id']) ? (int)$_POST['message_id'] : 0;
             $answerText = isset($_POST['answer']) ? trim((string)$_POST['answer']) : '';
             if ($msgId > 0 && $answerText !== '') {
-                $db->subjectMessageAnswerSubmit($msgId, $answerText);
+                if (isset($user['is_teacher'])) {
+                    $db->subjectMessageAnswerSubmit($msgId, $answerText);
+                } elseif (isset($user['guest'])) {
+                    $db->messageCommentSubmit($msgId, $answerText);
+                }
                 // redirect to avoid duplicate submission on refresh
                 header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
                 exit;
@@ -58,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
     }
-    // After POST handling, fetch messages
     $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
 }
 
