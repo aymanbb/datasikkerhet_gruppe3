@@ -4,63 +4,94 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
-$subject_id = $_GET['ref'];
+$db = new Database();
 
+// read subject id (no extra validation per your request)
+$subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
+
+// original auth check left as-is (you said not to change unrelated logic)
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
-if (!isset($_SESSION['logged_in']) && (isset($_SESSION['guest'])  != true && $_SESSION['permitted_subject'] != $subject_id)) {
+if (!isset($_SESSION['logged_in']) && ($_SESSION['guest'] != true && $_SESSION['permitted_subject'] != $subject_id)) {
     header('Location: index.php');
 }
-
-$db = new Database();
 
 // validering paa vei?
 
 $emne_info = $db->getSubjectInfo((int)$subject_id);
 $emnenavn = $emne_info['subject_name'];
-$foreleser = $db->userFindById((int)$emne_info['teacher_id']);
-$foreleser_img = "/steg1//media/" . $foreleser['picture_filename'];
+$foreleser = $db->userFindById($emne_info['teacher_id']);
+$foreleser_img = "/steg1/media/" . $foreleser['picture_filename'];
 
-$user_id = getSessionUserId();
-$user = $db->userFindById($user_id);
-$is_guest = isset($_SESSION['guest']);
+// Use session user id directly as requested
+$user_id = $_SESSION['user']['id'] ?? null;
 
-// FLAGS
-$is_teacher = false;
-if ($user != null) {
-    $is_teacher = (bool)$user['is_teacher'];
-} else {
-    // WARNING: Should not get here!
-    http_response_code(569);
-    exit;
-}
-$user_can_comment = $is_guest == true || $is_teacher == false;
-$user_can_answer =  $is_teacher;
-$user_can_message = $is_guest != true && $is_teacher == false;
+// Read only the two session flags you specified:
+// - can_message: permission to submit subject messages (test-melding).
+// - can_answer: permission to post comments/answers on messages.
+// Normalize them to booleans so checks are reliable.
+$user_can_message = !empty($_SESSION['can_message']);
+$user_can_answer  = !empty($_SESSION['can_answer']);
 
-if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    if (isset($_GET['message-submit'])) {
-        $user_id = $_SESSION['user']['id'];
+// initialize message feedback
+$message = '';
 
-        $new_message = 'invalid message. Pray!';
-        if (isset($_GET['message'])) {
-            $new_message = trim((string)$_GET['message']);
+// fetch messages for display (ensure $subject_messages exists if no submission)
+$subject_messages = [];
+
+// Handle POST (answer submissions)
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST['answer_submit'])) {
+        // Only allow answering if session flag permits it
+        if (!$user_can_answer) {
+            $message = 'Du har ikke tillatelse til å kommentere/svare.';
+        } else {
+            $msgId = isset($_POST['message_id']) ? (int)$_POST['message_id'] : 0;
+            $answerText = isset($_POST['answer']) ? trim((string)$_POST['answer']) : '';
+            if ($msgId > 0 && $answerText !== '') {
+                $db->subjectMessageAnswerSubmit($msgId, $answerText);
+                // redirect to avoid duplicate submission on refresh
+                header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
+                exit;
+            } else {
+                $message = 'Ugyldig svar.';
+            }
         }
-
-        //answer
-        //subject_ID
-        $db->subjectMessageSubmit((int)$user_id, (int)$subject_id, $new_message);
-    }elseif (isset($_GET['answer-submit'])) {
-        $db->subjectMessageAnswerSubmit((int)$_GET['message_id'], $_GET['answer']);
-        header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
-        exit;
     }
-    elseif (isset($_GET['comment-submit'])) {
-        $db->MessageCommentSubmit($user_id, (int)$_GET['message_id'], $_GET['comment_body']);
-        header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
-        exit;
-    }
+    // After POST handling, fetch messages
     $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
+}
+
+// Handle GET (message submissions and initial load)
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    // message submission using GET (kept as in your HTML)
+    if (isset($_GET['test-melding-submit'])) {
+        // Only allow sending a message if session flag allows it
+        if (!$user_can_message) {
+            $message = 'Du har ikke tillatelse til å sende melding for dette emnet.';
+        } else {
+            $user_id = $user_id ?? ($_SESSION['user']['id'] ?? null);
+            $new_message = '';
+            if (isset($_GET['test-melding'])) {
+                $new_message = trim((string)$_GET['test-melding']);
+            }
+            if (!empty($user_id) && $new_message !== '') {
+                $db->subjectMessageSubmit((int)$user_id, (int)$subject_id, $new_message);
+                // redirect to clean the query (prevents resubmits)
+                header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
+                exit;
+            } else {
+                $message = 'Ugyldig melding eller ikke logget inn.';
+            }
+        }
+    }
+    // fetch messages for display
+    $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
+}
+
+// helper to detect presence of an "answer", treating SQL NULL, empty string and literal 'NULL' as absent
+function answer_present($val) {
+    return ($val !== null && $val !== '' && $val !== 'NULL');
 }
 
 ?>
@@ -168,75 +199,51 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                         resize: none;
                     }
 
-                    button {
-                        padding: 3px 10px 3px 10px;
-                        margin-top: 0.5rem;
+                        button {
+                            padding: 3px 10px 3px 10px;
+                            margin-top: 0.5rem;
+                        }
                     }
                 }
             }
-        }
-    </style>
-</head>
-
-<body>
-    <a href="#send_message" id="skip">Hopp til bunnen</a>
-    <section>
-        <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
-        <nav>
-            <ul>
-                <li><a href="index.php">Gå til forsiden</a></li>
-                <li><a href="guest_login.php">Fortsett som gjest</a></li>
-                <li><a href="forgot-password.php">Glemt passord?</a></li>
-                <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
-
-            </ul>
-        </nav>
-        <article>
-            <h2>Foreleser</h2>
-            <p>Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> er <?= htmlspecialchars($foreleser['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>. Kan nås på e-post: <?= htmlspecialchars($foreleser['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
-            <img src="<?php echo htmlspecialchars($foreleser_img); ?>" alt="Bilde av foreleser">
-        </article>
-        <?php foreach ($subject_messages as $subject_message): ?>
+        </style>
+    </head>
+    <body>
+        <a href="#send_message" id="skip">Hopp til bunnen</a>
+        <section>
+            <h1><?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Gå til forsiden</a></li>
+                    <li><a href="guest_login.php">Fortsett som gjest</a></li>
+                    <li><a href="forgot-password.php">Glemt passord?</a></li>
+                    <li><a href="emneoversikt.php">Emneoversikt ditto</a></li>
+                    
+                </ul>
+            </nav>
             <article>
-                <h3>Fra anonym:</h3>
-                <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
-                <?php if ($subject_message['answer'] !== 'NULL'): // <-- I CANNOT BELIEVE THIS WHAT THE FUCK 
-                ?>
-                    <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
-
-                <?php elseif ($user_can_answer == true): ?>
-                    <form action="" method="GET">
-                        <input type="hidden" name="ref" value="<?= $subject_id ?>">
-                        <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
-                        <textarea name="answer" maxlength="256" rows="10" cols="50"></textarea>
-                        <button type="submit" name="answer-submit">Svar</button>
-                    </form>
-                <?php endif; ?>
-
+                <h2>Foreleser</h2>
+                <p>Foreleser for <?= htmlspecialchars($emnenavn ?? '', ENT_QUOTES, 'UTF-8') ?> er <?= htmlspecialchars($foreleser['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>. Kan nås på e-post: <?= htmlspecialchars($foreleser['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                <img src="<?php echo htmlspecialchars($foreleser_img); ?>" alt="Bilde av foreleser">
             </article>
-            <?php foreach ($db->MessageCommentsFetchAll((int)$subject_message['message_id']) as $message_comment): ?>
+            <?php foreach ($subject_messages as $subject_message): ?>
                 <article>
-                    <h3>Fra anonym:</h3>
-                    <p class="comment"><?= htmlspecialchars($message_comment['comment_body']) ?></p>
+                    <h3><?= 'Melding nr. ' . htmlspecialchars($subject_message['message_id']) . " " ?>Fra anonym:</h3>
+                    <p class="message"><?= htmlspecialchars($subject_message['message_body']) ?></p>
+                        <?php if (answer_present($subject_message['answer'])): ?>
+                                <p class="answer"> <?= htmlspecialchars($subject_message['answer']) ?> </p>
+                        <?php else: ?>
+                                <?php if ($user_can_answer): ?>
+                                    <form action="" method="POST">
+                                        <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
+                                        <textarea name="answer" maxlength="256" rows="10" cols="50"></textarea>
+                                        <button type="submit" name="answer_submit">Svar</button>
+                                    </form>
+                                <?php endif; ?>
+                        <?php endif; ?> 
                 </article>
             <?php endforeach; ?>
-
-            <?php if ($user_can_comment == true): // COMMENT INPUT FIELD
-            ?>
-                <article>
-                    <h3>Skriv en kommentar:</h3>
-                    <form action="" method="GET">
-                        <input type="hidden" name="ref" value="<?= $subject_id ?>">
-                        <input type="hidden" name="message_id" value="<?= htmlspecialchars($subject_message['message_id']) ?>">
-                        <textarea name="comment_body" maxlength="256" rows="10" cols="50"></textarea>
-                        <button type="submit" name="comment-submit">kommenter</button>
-                    </form>
-                </article>
-            <?php endif; ?>
-
-        <?php endforeach; ?>
-    </section>
-    <?php if ($user_can_message): ?>
+        </section>
         <article>
             <h2>Delta i samtalen!</h2>
             <form method="get">

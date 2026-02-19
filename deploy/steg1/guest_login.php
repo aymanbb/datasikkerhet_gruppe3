@@ -3,6 +3,11 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/session.php';
 
+if (isset($_SESSION['logged_in'])) {
+    header("Location: emneoversikt.php");
+    exit;
+}
+
 $db = new Database();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -14,17 +19,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (!$subject) {
             echo "Please, for the love of god!";
-        } else {
+        }
+        else {
             try {
-                $params = http_build_query([
-                    'ref' => $subject['subject_id']
-                ]);
                 $_SESSION['guest'] = true;
                 $_SESSION['permitted_subject'] = $subject['subject_id'];
+                $_SESSION['can_message'] = false;
+                $_SESSION['can_answer'] = true;
+                $params = http_build_query([
+                    'ref' => $_SESSION['permitted_subject']
+                ]);
                 header("Location: subject_messages.php?" . $params, true, 303);
                 exit;
             } catch (PDOException $e) {
-                die("Serious error message for serious problems" . $e->getMessage());
+               die("Serious error message for serious problems" . $e->getMessage());
             }
         }
     }
