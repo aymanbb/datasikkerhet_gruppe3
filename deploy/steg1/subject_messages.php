@@ -6,10 +6,8 @@ require_once __DIR__ . '/includes/session.php';
 
 $db = new Database();
 
-// read subject id (no extra validation per your request)
 $subject_id = isset($_REQUEST['ref']) ? (int)$_REQUEST['ref'] : 0;
 
-// original auth check left as-is (you said not to change unrelated logic)
 // sjekker om bruker er logget inn, eller er gjest med tilgang til emne
 //if ($_SESSION['guest'] == true && $_SESSION['subject_permitted'] == $subject_id || isset($_SESSION['logged_in'])) {
 if (!isset($_SESSION['logged_in']) && ($_SESSION['guest'] != true && $_SESSION['permitted_subject'] != $subject_id)) {
@@ -23,26 +21,17 @@ $emnenavn = $emne_info['subject_name'];
 $foreleser = $db->userFindById($emne_info['teacher_id']);
 $foreleser_img = "/steg1/media/" . $foreleser['picture_filename'];
 
-// Use session user id directly as requested
 $user_id = $_SESSION['user']['id'] ?? null;
 
-// Read only the two session flags you specified:
-// - can_message: permission to submit subject messages (test-melding).
-// - can_answer: permission to post comments/answers on messages.
-// Normalize them to booleans so checks are reliable.
 $user_can_message = !empty($_SESSION['can_message']);
 $user_can_answer  = !empty($_SESSION['can_answer']);
 
-// initialize message feedback
 $message = '';
 
-// fetch messages for display (ensure $subject_messages exists if no submission)
 $subject_messages = [];
 
-// Handle POST (answer submissions)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST['answer_submit'])) {
-        // Only allow answering if session flag permits it
         if (!$user_can_answer) {
             $message = 'Du har ikke tillatelse til å kommentere/svare.';
         } else {
@@ -50,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $answerText = isset($_POST['answer']) ? trim((string)$_POST['answer']) : '';
             if ($msgId > 0 && $answerText !== '') {
                 $db->subjectMessageAnswerSubmit($msgId, $answerText);
-                // redirect to avoid duplicate submission on refresh
                 header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
                 exit;
             } else {
@@ -58,15 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
     }
-    // After POST handling, fetch messages
     $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
 }
 
-// Handle GET (message submissions and initial load)
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    // message submission using GET (kept as in your HTML)
     if (isset($_GET['test-melding-submit'])) {
-        // Only allow sending a message if session flag allows it
         if (!$user_can_message) {
             $message = 'Du har ikke tillatelse til å sende melding for dette emnet.';
         } else {
@@ -77,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             }
             if (!empty($user_id) && $new_message !== '') {
                 $db->subjectMessageSubmit((int)$user_id, (int)$subject_id, $new_message);
-                // redirect to clean the query (prevents resubmits)
                 header("Location: " . $_SERVER['PHP_SELF'] . "?ref=" . $subject_id);
                 exit;
             } else {
@@ -85,11 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             }
         }
     }
-    // fetch messages for display
     $subject_messages = $db->subjectMessageFetchAll((int)$subject_id);
 }
 
-// helper to detect presence of an "answer", treating SQL NULL, empty string and literal 'NULL' as absent
 function answer_present($val) {
     return ($val !== null && $val !== '' && $val !== 'NULL');
 }
