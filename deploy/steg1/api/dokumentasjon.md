@@ -1,20 +1,31 @@
-## POST basert API
+## API-dokumentasjon
 
 Man har muligheten til å utføre operasjoner/funksjoner på nettsiden gjennom å gjøre
 POST requests mot api_request_handler.php. 
 
-Det fungerer som et indirekte funksjonskall i JSON format som er strukturert slik:
-- string : "session_id" : som inneholder session_id man får etter autentisering. **Må** inneholde dette, med mindre man forsøker å logge inn.
-- string : "action" : navnet på funksjonen man kaller.
-- varierende type : parametere som brukes i funksjonen.
+Det fungerer som et indirekte funksjonskall hvor man sender autoriserende information og legger ved parametere og navnet på funksjonen man vil kalle i json format.
 
-Her er et eksempel i curl:
+Man har muligheten til å logge seg inn eller registrere en student-bruker uten å allerede ha autentisert seg, naturligvis, men alle andre funksjoner behøver autorisering/login før bruk.
 
+## Eksempler:
+### Bash med curl
+
+Kanskje den mest "straight forward" måten å gjøre post requests til api-et.
+
+Autorisering:
 ```bash
 curl -X POST http://158.39.188.219/api/api_request_handler.php \
   -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"action":"login","username":"<username>", "password":"<password>}'
+```
+
+Request:
+```bash
+curl -X POST http://158.39.188.219/api/api_request_handler.php \
+  -H "Content-Type: application/json" \
+  -b cookies.txt \
   -d '{
-        "session_id": "abc123",
         "action": "user_student_register",
         "username": "name nameson",
         "email": "email@email.com",
@@ -22,6 +33,41 @@ curl -X POST http://158.39.188.219/api/api_request_handler.php \
       }'
 ```
 
+### Powershell med Invoke-RestMethod
+
+Login:
+```powershell
+# Definer en header variabel med nødvendig informasjon for å kunne gjøre en "request"
+$headers = @{
+     "Content-Type" = "application/json"
+ }  # No backtick here
+
+# Send request med headers
+Invoke-RestMethod `
+   -Uri "http://158.39.188.219/steg1/api/api_request_handler.php" `
+   -Method POST `
+   -Headers $headers `
+   -Body '{"action":"login", "username":"<username>", "password":"<password>}' `
+   -ContentType "application/json"
+```
+```powershell
+# Definer en header variabel med nødvendig informasjon for å kunne gjøre en "request".
+# "Authorization" må inneholde en session key man får tilbake etter å autorisere seg, ellers
+# kan ikke handlingen utføres. 
+$headers = @{
+     "Content-Type" = "application/json"
+     "Authorization" = "session <session id>"
+ }  # No backtick here
+
+Invoke-RestMethod `
+   -Uri "http://158.39.188.219/steg1/api/api_request_handler.php" `
+   -Method POST `
+   -Headers $headers `
+   -Body '{"action" : "subjects_fetch_all"}' `
+   -ContentType "application/json"
+```
+
+## Eksponerte funksjoner
 liste over funksjoner og parametere:
 - *login* : params = (string \<username>, string \<password>) : returns: session
     - autentiserer mot et brukernavn og passord. Returnerer en session.
