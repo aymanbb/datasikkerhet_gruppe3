@@ -42,39 +42,7 @@ $subjects = $db->subjectsFetchAll();
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Emneoversikt</title>
-        <style>
-            section {
-                    display: flex;
-                    flex-direction: column;
-
-                    h1 {
-                        margin: auto;
-                    }
-
-                    nav ul {
-                        padding: 0;
-                        list-style: none;
-                        margin: auto;
-                        display: flex;
-                        justify-content: center;
-
-                        li {
-                            margin: 0.5rem;
-
-                            a{
-                                text-decoration: none;
-                            }
-                        }
-                    }
-
-                    article {
-                        border: 3px solid black;
-                        padding: 2rem;
-                        width: 50dvw;
-                        margin: 1rem auto 1rem auto;
-                    }
-                }
-        </style>
+        <link rel="stylesheet" href="styles/style.css">
     </head>
     <body>
         <section>

@@ -44,6 +44,5 @@ body {
                 section {
                         display: flex;
                         flex-direction: column;
-                        padding: 2rem 0rem 2rem 0rem;
                 }
-        }
+}
