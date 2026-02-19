@@ -22,9 +22,11 @@ if (!$data) {
 $db = new Database();
 $login = new Login();
 
-if ($data['action'] == 'login') {
-    $username = $data["login_username"];
-    $password = $data["login_password"];
+
+$action = $data['action'] ?? '';
+if ($action === 'login') {
+    $username = $data["username"] ?? '';
+    $password = $data["password"] ?? '';
     $success = $login->api_login($username, $password);
     if ($success){
         http_response_code(200);
@@ -37,6 +39,18 @@ if ($data['action'] == 'login') {
         http_response_code(400);
     }
     exit;    
+}elseif($action === 'user_student_register'){
+    $username = ($data['username']) ?? '';
+    $email = ($data['email']) ?? '';
+    $password = ($data['password']) ?? '';
+    $success = $db->userStudentRegister($username, $email, $password);
+
+    $request_status = $success ? "user register successful" : "user register not successful";
+    http_response_code(200);
+    echo json_encode([
+        "status" => $request_status
+    ]);
+    exit;
 }
 // NOTE: You should only be able to get here if you are authorized....
 // Let's see if that's the case..
@@ -51,7 +65,6 @@ if (!empty($headers['Authorization'])) {
 session_start();
 
 // Example: simple action switch
-$action = $data['action'] ?? '';
 switch ($action) {
     case "ping":
         echo json_encode([
@@ -67,18 +80,18 @@ switch ($action) {
     //     http_response_code(200);
     //     break;
 
-    case "user_student_register":
-        $username = ($data['username']) ?? '';
-        $email = ($data['email']) ?? '';
-        $password = ($data['password']) ?? '';
-        $success = $db->userStudentRegister($username, $email, $password);
+    // case "user_student_register":
+    //     $username = ($data['username']) ?? '';
+    //     $email = ($data['email']) ?? '';
+    //     $password = ($data['password']) ?? '';
+    //     $success = $db->userStudentRegister($username, $email, $password);
 
-        $request_status = $success ? "user register successful" : "user register not successful";
-        http_response_code(200);
-        echo json_encode([
-            "status" => $request_status
-        ]);
-        break;
+    //     $request_status = $success ? "user register successful" : "user register not successful";
+    //     http_response_code(200);
+    //     echo json_encode([
+    //         "status" => $request_status
+    //     ]);
+    //     break;
 
     case "subjects_fetch_all":
         $subjects = $db->subjectsFetchAll();
@@ -143,7 +156,7 @@ switch ($action) {
 
     default:
         http_response_code(400);
-        echo json_encode(["error" => "Unknown action"]);
+        echo json_encode(["error" => "Unknown action or just a bad move in general."]);
 }
 exit;
 
@@ -209,6 +222,18 @@ Invoke-RestMethod `
   -Headers $headers `
   -Body '{"action":"subjects_fetch_all"}' `
   -ContentType "application/json"
+
+$headers = @{
+     "Content-Type" = "application/json"
+     "Authorization" = "session <session id>"
+ }  # No backtick here
+
+Invoke-RestMethod `
+   -Uri "http://158.39.188.219/steg1/api/api_request_handler.php" `
+   -Method POST `
+   -Headers $headers `
+   -Body '{"action":"subjects_fetch_all"}' `
+   -ContentType "application/json"
 
 
 */
