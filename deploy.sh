@@ -1,2 +1,4 @@
 #Kjør i terminal som startes fra rotmappen til repoet: "datasikkerhet_gruppe3"
-scp -r deploy/* www-data@158.39.188.219:/var/www/html/
+scp -r deploy/steg2/* www-data@158.39.188.219:/var/www/html/steg2
+
+scp -r deploy/steg2/* www-data@158.39.188.219:/var/www/html/<dinmappe>
