@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $login->login($username, $password);
         }
         if (isLockedOut()) {
-            echo "You're locked out! Please try again in a few minutes.";
+            $message =  "You're locked out! Please try again in a few minutes.";
         }
     } elseif (isset($_POST['register_submit'])) { // Register normal student user
         $username = trim($_POST["register_username"]);
@@ -111,6 +111,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2>Logg inn</h2>
         <form action="" method="post">
             <?php echo csrf_field(); ?>
+
+                <?php if (!empty($message)): ?>
+                    <p style="color:red;">
+                        <?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
+                    </p>
+                <?php endif; ?>
 
             <label for="login-username">Navn:</label>
             <input type="text" id="login-username" name="login_username" required>
