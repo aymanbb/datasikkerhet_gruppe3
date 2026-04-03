@@ -8,46 +8,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$errors = []; // for storing the error messages
-$inputs = []; // for storing sanitized input values
-
-$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
-
-if ($request_method === 'GET') {
-	// generate a token
-	$_SESSION['token'] = bin2hex(random_bytes(35));
-	// show the form
-	require __DIR__ . '/inc/get.php';
-} elseif ($request_method === 'POST') {
-	// handle the form submission
-	require __DIR__ .  '/inc/post.php';
-	// re-display the form if the form contains errors
-	if ($errors) {
-		require	__DIR__ .  '/inc/get.php';
-	}
-}
-
+// Session timeout after an hour
+$sessionLifetime = 1800; // seconds
 
 // Initialize rate limiter variables
 $maxAttempts = 5; // Maximum attempts
 $lockoutTime = 900; // Lockout period in seconds (15 minutes)
 
 // Generating a randomized hashed token
-if(!isset($_SESSION["csrf_token"])){
-    $_SESSION["csrf_token"]=bin2hex(random_bytes(32));
-}
 
-// Generating a randomized hashed token
-$_SESSION['token'] = md5(uniqid(mt_rand(), true));
 
 // Record of last activity to handle session expiration
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $sessionLifetime)) {
     session_unset();
     session_destroy();
     header('Location: login.php'); 
     exit;
     }
 
+// Store the current time as last activity
+$_SESSION['LAST_ACTIVITY'] = time(); 
 
 // Function to reset login attempts
 function resetAttempts() {
@@ -57,11 +37,36 @@ function resetAttempts() {
         $elapsedTime = time() - $_SESSION['last_attempt_time'];
         if ($elapsedTime >= $lockoutTime) {
             $_SESSION['login_attempts'] = 0;
+            unset($_SESSION['last_attempt_time']);
         }
     } else {
         $_SESSION['login_attempts'] = 0;
     }
-    $_SESSION['last_attempt_time'] = time();
+}
+// Generating a randomized hashed token
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Helper to output CSRF field in forms
+function csrf_field(): string
+{
+    $token = $_SESSION['csrf_token'] ?? '';
+    return '<input type="hidden" name="csrf_token" value="' .
+        htmlspecialchars($token, ENT_QUOTES, 'UTF-8') .
+        '">';
+}
+
+// Helper to validate CSRF token in POST handlers
+function validate_csrf_token(): void
+{
+    if (
+        !isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+        !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+    ) {
+        http_response_code(400);
+        die('Invalid CSRF token');
+    }
 }
 
 // Function to check lockout
@@ -77,9 +82,6 @@ function isLockedOut() {
 
 // Reset attempts if necessary
 resetAttempts();
-
-// Store the current time as last activity
-$_SESSION['LAST_ACTIVITY'] = time(); 
 
 
 // Rate limiter
