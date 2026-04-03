@@ -113,6 +113,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <article>
         <h2>Login</h2>
         <form action="" method="post">
+            <input type="hidden" name="csrf_token"
+                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+
             <label for="login-username">Username:</label>
             <input type="text" id="login-username" name="login_username" required>
 
