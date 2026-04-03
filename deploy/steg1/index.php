@@ -110,6 +110,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <article>
         <h2>Logg inn</h2>
         <form action="" method="post">
+            <?php echo csrf_field(); ?>
+
             <label for="login-username">Navn:</label>
             <input type="text" id="login-username" name="login_username" required>
 
@@ -124,6 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2>Registrer deg</h2>
         <a href="foreleser_register.php">Registrering for forelesere</a>
         <form action="" method="post">
+            <?php echo csrf_field(); ?>
+
             <label for="register-username">Navn:</label>
             <input type="text" id="register-username" name="register_username" required>
 
