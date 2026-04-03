@@ -10,7 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Session timeout after an hour
+// Session timeout after half an hour
 $sessionLifetime = 1800; // seconds
 
 // Initialize rate limiter variables
