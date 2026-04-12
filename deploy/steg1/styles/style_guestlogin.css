@@ -1,0 +1,31 @@
+            body{
+                margin: 3rem;
+
+                h1{
+                    display: flex;
+                    justify-content: center;
+                }
+
+                nav ul {
+                        padding: 0;
+                        list-style: none;
+                        display: flex;
+                        justify-content: end;
+                        margin-right: 14rem;
+
+                        li {
+                            margin: 0.5rem;
+
+                            a{
+                                text-decoration: none;
+                            }
+                        }
+                }
+
+                form {
+                    border: 3px solid black;
+                    padding: 2rem;
+                    width: 50dvw;
+                    margin: 1rem auto 1rem auto;
+                }
+            }

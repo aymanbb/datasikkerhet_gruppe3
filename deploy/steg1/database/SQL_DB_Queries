@@ -1,0 +1,97 @@
+CREATE DATABASE g3_database_actual;
+
+USE g3_database_actual;
+
+CREATE TABLE users (
+        user_id int NOT NULL AUTO_INCREMENT,
+        username varchar(75),
+        email varchar(50),
+        password varchar(255),
+        is_teacher BOOLEAN NOT NULL DEFAULT FALSE,
+        picture_filename varchar(50),
+        PRIMARY KEY (user_id)
+);
+
+CREATE TABLE subjects (
+        subject_id int NOT NULL AUTO_INCREMENT,
+        subject_name varchar(50),
+        subject_pin int(4),
+        teacher_id int NOT NULL,
+        PRIMARY KEY (subject_id),
+        FOREIGN KEY (teacher_id) REFERENCES users(user_id),
+        UNIQUE (subject_pin)
+);
+
+CREATE TABLE messages (
+        message_id int NOT NULL AUTO_INCREMENT,
+        user_id int NOT NULL,
+        message_body varchar(255),
+        answer varchar(255),
+        subject_id int NOT NULL,
+        PRIMARY KEY (message_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+);
+
+CREATE TABLE comments (
+        comment_id int NOT NULL AUTO_INCREMENT,
+        message_id int NOT NULL,
+        comment_body varchar(255),
+        PRIMARY KEY (comment_id),
+        FOREIGN KEY (message_id) REFERENCES messages(message_id)
+);
+
+DELIMITER //
+CREATE PROCEDURE addStudent (IN username VARCHAR(75), IN email VARCHAR(50), IN password VARCHAR(255))
+BEGIN
+        INSERT INTO users (username, email, password) VALUES (username, email, password);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE addSubject (IN subject_name VARCHAR(50), IN subject_pin INT(4), IN teacher_id INT)
+BEGIN
+        INSERT INTO subjects (subject_name, subject_pin, teacher_id) VALUES (subject_name, subject_pin, teacher_id);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE addTeacher (IN username VARCHAR(75), IN email VARCHAR(50), IN password VARCHAR(255), IN picture_filename VARCHAR(50), IN subject_pin INT(4), IN subject_name VARCHAR(50))
+BEGIN
+        DECLARE teacherTrue BOOLEAN;
+        SET teacherTrue = TRUE;
+        INSERT INTO users (username, email, password, is_teacher, picture_filename) VALUES (username, email, password, teacherTrue, picture_filename);
+
+        -- get the newly inserted user id
+        SET @new_teacher_id = LAST_INSERT_ID();
+
+        INSERT INTO subjects (subject_name, subject_pin, teacher_id) VALUES (subject_name, subject_pin, @new_teacher_id);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE addMessage (IN user_id INT, IN message_body VARCHAR(255), IN subject_id VARCHAR(255))
+BEGIN
+        INSERT INTO messages (user_id, message_body, subject_id) VALUES (user_id, message_body, subject_id);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE addAnswerToMessage (IN message_id INT, IN answer_text VARCHAR(255))
+BEGIN
+        UPDATE messages SET answer = answer_text
+        WHERE message_id = message_id AND answer IS NULL;
+END //
+DELIMITER ;
+
+// Procedure to add answer to messages, skim over and adjust
+DELIMITER //
+CREATE PROCEDURE addComment (IN messageID INT, IN comment VARCHAR(255))
+BEGIN
+	INSERT INTO comments VALUES (messageID,	comment);
+END //
+DELIMITER ;
+
+CREATE USER 'user_rick'@'localhost' IDENTIFIED BY 'Never gonna let you down';
+GRANT SELECT, INSERT ON g3_database_actual.* TO 'user_rick'@'localhost';
+GRANT EXECUTE ON g3_database_actual.* TO 'user_rick'@'localhost';
