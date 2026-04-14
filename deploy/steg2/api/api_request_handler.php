@@ -62,6 +62,7 @@ if (!empty($headers['Authorization'])) {
         session_id($matches[1]);  // MUST happen before session_start()
     }
     else{
+        http_response_code(400);
         exit;
     }
 }

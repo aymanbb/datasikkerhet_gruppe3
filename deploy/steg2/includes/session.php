@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/global_delay.php'
+require_once (__DIR__ . '/global_delay.php');
 
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
