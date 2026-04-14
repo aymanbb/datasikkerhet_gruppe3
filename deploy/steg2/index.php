@@ -15,6 +15,7 @@ if (isset($_SESSION['logged_in'])) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    validate_csrf_token();    
     if (isset($_POST['login_submit'])) { 
         $username = trim($_POST["login_username"]);
         $password = $_POST["login_password"];
@@ -73,6 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2>Registrer deg</h2>
         <a href="foreleser_register.php">Registrering for forelesere</a>
         <form action="" method="post">
+            <?php echo csrf_field(); ?>
             <label for="register-username">Navn:</label>
             <input type="text" id="register-username" name="register_username" required>
 
