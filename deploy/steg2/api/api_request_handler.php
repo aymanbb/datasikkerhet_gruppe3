@@ -61,6 +61,10 @@ if (!empty($headers['Authorization'])) {
     if (preg_match('/Session\s(\S+)/', $headers['Authorization'], $matches)) {
         session_id($matches[1]);  // MUST happen before session_start()
     }
+    else{
+        http_response_code(400);
+        exit;
+    }
 }
 session_start();
 

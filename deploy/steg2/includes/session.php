@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/global_delay.php';  
+require_once (__DIR__ . '/global_delay.php');
 
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
@@ -10,29 +10,31 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Session timeout after half an hour
+// Session timeout after 30 minutes
 $sessionLifetime = 1800; // seconds
 
 // Initialize rate limiter variables
-$maxAttempts = 5; // Maximum attempts
+$maxAttempts = 5;   // Maximum attempts
 $lockoutTime = 900; // Lockout period in seconds (15 minutes)
-
-// Generating a randomized hashed token
 
 
 // Record of last activity to handle session expiration
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $sessionLifetime)) {
+if (
+    isset($_SESSION['LAST_ACTIVITY']) &&
+    (time() - $_SESSION['LAST_ACTIVITY'] > $sessionLifetime)
+) {
     session_unset();
     session_destroy();
-    header('Location: login.php'); 
+    header('Location: login.php');
     exit;
-    }
+}
 
 // Store the current time as last activity
-$_SESSION['LAST_ACTIVITY'] = time(); 
+$_SESSION['LAST_ACTIVITY'] = time();
 
 // Function to reset login attempts
-function resetAttempts() {
+function resetAttempts()
+{
     global $lockoutTime;
 
     if (isset($_SESSION['last_attempt_time'])) {
@@ -45,21 +47,24 @@ function resetAttempts() {
         $_SESSION['login_attempts'] = 0;
     }
 }
-// Generating a randomized hashed token
+
+// CSRF token generation
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Helper to output CSRF field in forms
+// Helper to output CSRF field in forms.
 function csrf_field(): string
 {
     $token = $_SESSION['csrf_token'] ?? '';
+
     return '<input type="hidden" name="csrf_token" value="' .
         htmlspecialchars($token, ENT_QUOTES, 'UTF-8') .
         '">';
 }
 
-// Helper to validate CSRF token in POST handlers
+
+// Helper to validate CSRF token in POST handlers.
 function validate_csrf_token(): void
 {
     if (
@@ -86,8 +91,8 @@ function isLockedOut() {
 resetAttempts();
 
 
-// Rate limiter
-function rate_limiter($key, $limit, $period) {
+function rate_limiter($key, $limit, $period)
+{
     // Create a secure file name based on the key using SHA-256 hashing
     $filename = 'RLIMITER/' . hash('sha256', $key) . '.txt';
 
@@ -103,7 +108,7 @@ function rate_limiter($key, $limit, $period) {
     }
 
     // Initialize the data array
-    $data = array();
+    $data = [];
 
     // Check if the file exists and read its contents
     if (file_exists($filename)) {
@@ -112,13 +117,15 @@ function rate_limiter($key, $limit, $period) {
 
     // Get the current time and reset the count if the period has elapsed
     $current_time = time();
-    if (isset($data[$ip]) && $current_time - $data[$ip]['last_access_time'] >= $period) {
+    if (
+        isset($data[$ip]) &&
+        $current_time - $data[$ip]['last_access_time'] >= $period
+    ) {
         $data[$ip]['count'] = 0;
     }
 
     // Check if the limit has been exceeded
     if (isset($data[$ip]) && $data[$ip]['count'] >= $limit) {
-        // Return an error message or redirect to an error page
         http_response_code(429);
         header('Retry-After: ' . $period);
         die('Error: Rate limit exceeded');
@@ -126,14 +133,19 @@ function rate_limiter($key, $limit, $period) {
 
     // Increment the count and save the data to the file
     if (!isset($data[$ip])) {
-        $data[$ip] = array('count' => 0, 'last_access_time' => 0);
+        $data[$ip] = [
+            'count'            => 0,
+            'last_access_time' => 0,
+        ];
     }
+
     $data[$ip]['count']++;
     $data[$ip]['last_access_time'] = $current_time;
+
     file_put_contents($filename, json_encode($data));
 
     // Return the remaining time until the limit resets (in seconds)
     return $period - ($current_time - $data[$ip]['last_access_time']);
-}?>
+}
 
-
+?>

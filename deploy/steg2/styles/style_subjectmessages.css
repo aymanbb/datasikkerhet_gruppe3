@@ -1,0 +1,112 @@
+            body {
+
+                #skip {
+                    bottom: 0;
+                    position: fixed;
+                    right: 3rem;
+                    margin: 1rem;
+                    padding: 1rem;
+                    height: 3rem;
+                    width: fit-content;
+                    align-items: center;
+                    display: flex;
+                    font-size: 16px;
+                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+                    text-decoration: none;
+                    border: 3px solid black;
+                }
+
+                nav ul{
+                    padding: 0;
+                    list-style: none;
+                    display: flex;
+                    justify-content: end;
+                    margin-right: 14rem;
+
+                    li {
+                        margin: 0.5rem;
+
+                        a{
+                            text-decoration: none;
+                        }
+                    }
+                } 
+
+                button {
+                    max-width: max-content;
+                }
+
+                section {
+                    display: flex;
+                    flex-direction: column;
+
+                    h1 {
+                        justify-content: center;
+                        display: flex;
+                    }
+
+                    nav ul {
+                        padding: 0;
+                        list-style: none;
+                        display: flex;
+                        justify-content: end;
+                        margin-right: 14rem;
+
+                        li {
+                            margin: 0.5rem;
+
+                            a{
+                                text-decoration: none;
+                            }
+                        }
+                    }
+                }
+            
+                article {
+                    display: flex;
+                    flex-direction: column;
+                    border: 3px solid black;
+                    padding: 2rem;
+                    width: 50dvw;
+                    margin: 1rem auto 1rem auto;
+
+                    .melding{
+                        border: 1px solid black;
+                        padding: 4px;
+                    }
+
+                    h2{
+                        width: 50dvw;
+                    }
+
+                    img{
+                        max-width: 150px;
+                    }
+
+                    .comment-answer{
+                        border: 3px solid black;
+                        padding: 1rem;
+                        max-width: 95%;
+                        margin: 1rem;
+                    }
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        width: 50dvw;
+                        margin: 1rem auto 1rem auto;
+
+                        textarea {
+                            resize: none;
+                        }
+
+                        button {
+                            padding: 3px 10px 3px 10px;
+                            margin-top: 0.5rem;
+                        }
+                    }
+                }
+            }
+
+
+
