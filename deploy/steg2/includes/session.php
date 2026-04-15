@@ -72,7 +72,7 @@ function validate_csrf_token(): void
         !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
     ) {
         http_response_code(400);
-        die('Invalid CSRF token');
+        die('Idk wtf is going on anymore ¯\_(ツ)_/¯');
     }
 }
 
